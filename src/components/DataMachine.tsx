@@ -11,6 +11,42 @@ const DataMachine = () => {
   const machineRef = useRef<HTMLDivElement>(null);
   const timeline = useRef<gsap.core.Timeline>();
 
+  // Animation configuration parameters
+  const CONFIG = {
+    particles: {
+      scale: {
+        min: 1.2,
+        max: 1.6
+      },
+      opacity: {
+        min: 0.6,
+        max: 0.8
+      },
+      duration: {
+        min: 3,
+        max: 4
+      },
+      // Time between particles from same source
+      frequency: {
+        min: 1,
+        max: 2
+      }
+    },
+    sources: {
+      // Initial delay between different sources starting
+      startDelay: {
+        min: 1,
+        max: 2
+      }
+    },
+    paths: {
+      // Padding from corners as percentage of container size
+      padding: 0.1,
+      strokeWidth: 0,
+      opacity: 0.4
+    }
+  };
+
   // Function to calculate path coordinates based on container size
   const calculatePaths = () => {
     if (!containerRef.current) return;
@@ -21,21 +57,40 @@ const DataMachine = () => {
     
     const centerX = width / 2;
     const centerY = height / 2;
-    const padding = Math.min(width, height) * 0.1;
+    
+    // Get icon positions (matching the positions in JSX)
+    const iconPositions = {
+      topLeft: { x: width * 0.1, y: height * 0.1 },      // 10% from top-left
+      topRight: { x: width * 0.9, y: height * 0.1 },     // 10% from top-right
+      bottomLeft: { x: width * 0.1, y: height * 0.9 },   // 10% from bottom-left
+      bottomRight: { x: width * 0.9, y: height * 0.9 }   // 10% from bottom-right
+    };
 
-    // Different curve pattern for each path
+    // Different curve pattern for each path, starting from icon centers
     const paths = [
       // Top left - S-curve
-      `M${padding},${padding} C${width * 0.1},${height * 0.5} ${width * 0.4},${height * 0.2} ${centerX},${centerY}`,
+      `M${iconPositions.topLeft.x},${iconPositions.topLeft.y} 
+       C${width * 0.1},${height * 0.5} 
+       ${width * 0.4},${height * 0.2} 
+       ${centerX},${centerY}`,
       
       // Top right - wide arc
-      `M${width - padding},${padding} C${width * 0.9},${height * 0.6} ${width * 0.6},${height * 0.3} ${centerX},${centerY}`,
+      `M${iconPositions.topRight.x},${iconPositions.topRight.y} 
+       C${width * 0.9},${height * 0.6} 
+       ${width * 0.6},${height * 0.3} 
+       ${centerX},${centerY}`,
       
       // Bottom left - tight curve then straight
-      `M${padding},${height - padding} C${width * 0.15},${height * 0.7} ${width * 0.2},${centerY} ${centerX},${centerY}`,
+      `M${iconPositions.bottomLeft.x},${iconPositions.bottomLeft.y} 
+       C${width * 0.15},${height * 0.7} 
+       ${width * 0.2},${centerY} 
+       ${centerX},${centerY}`,
       
       // Bottom right - wavy path
-      `M${width - padding},${height - padding} C${width * 0.7},${height * 0.8} ${width * 0.8},${height * 0.4} ${centerX},${centerY}`
+      `M${iconPositions.bottomRight.x},${iconPositions.bottomRight.y} 
+       C${width * 0.7},${height * 0.8} 
+       ${width * 0.8},${height * 0.4} 
+       ${centerX},${centerY}`
     ];
 
     paths.forEach((path, index) => {
@@ -79,15 +134,15 @@ const DataMachine = () => {
     const clonedParticle = particle.cloneNode(true) as HTMLElement;
     source.appendChild(clonedParticle);
     
-    const randomDuration = gsap.utils.random(3, 4);
-    const randomScale = gsap.utils.random(1.2, 1.6);
-    const randomOpacity = gsap.utils.random(0.6, 0.8);
+    const randomDuration = gsap.utils.random(CONFIG.particles.duration.min, CONFIG.particles.duration.max);
+    const randomScale = gsap.utils.random(CONFIG.particles.scale.min, CONFIG.particles.scale.max);
+    const randomOpacity = gsap.utils.random(CONFIG.particles.opacity.min, CONFIG.particles.opacity.max);
     
     gsap.fromTo(clonedParticle,
-      { scale: 0, opacity: 0 },
+      { scale: randomScale, opacity: randomOpacity },
       {
-        scale: randomScale,
-        opacity: randomOpacity,
+        scale: 0,
+        opacity: 0,
         motionPath: {
           path: `#path-${index}`,
           align: `#path-${index}`,
@@ -102,8 +157,10 @@ const DataMachine = () => {
       }
     );
 
-    // Much longer delay between particles (4 to 6 seconds)
-    gsap.delayedCall(gsap.utils.random(4, 6), () => createParticle(source, index));
+    gsap.delayedCall(
+      gsap.utils.random(CONFIG.particles.frequency.min, CONFIG.particles.frequency.max), 
+      () => createParticle(source, index)
+    );
   };
 
   const initializeAnimations = () => {
@@ -111,10 +168,10 @@ const DataMachine = () => {
 
     const sources = containerRef.current.querySelectorAll('.data-source');
     sources.forEach((source, index) => {
-      // Longer initial delay between sources (1 to 2 seconds)
-      gsap.delayedCall(index * gsap.utils.random(1, 2), () => {
-        createParticle(source, index);
-      });
+      gsap.delayedCall(
+        index * gsap.utils.random(CONFIG.sources.startDelay.min, CONFIG.sources.startDelay.max),
+        () => createParticle(source, index)
+      );
     });
   };
 
@@ -148,11 +205,11 @@ const DataMachine = () => {
               key={index}
               id={`path-${index}`}
               stroke="#4F46E5"
-              strokeWidth="3"
+              strokeWidth={CONFIG.paths.strokeWidth}
               fill="none"
               filter="url(#glow)"
               className="path-line"
-              style={{ opacity: 0 }}
+              style={{ opacity: CONFIG.paths.opacity }}
             />
           ))}
         </svg>
@@ -174,7 +231,7 @@ const DataMachine = () => {
         </div>
       </div>
 
-      {/* Data Sources - Keep icons above (z-20) but particles below machine */}
+      {/* Data Sources - positioned at 10% from edges */}
       <div className="data-source absolute" style={{ top: '10%', left: '10%' }}>
         <FileJson className="w-12 h-12 text-blue-400 relative z-20" />
         <div className="particle absolute w-4 h-4 bg-blue-400 rounded-full scale-0 opacity-0 z-5"></div>
