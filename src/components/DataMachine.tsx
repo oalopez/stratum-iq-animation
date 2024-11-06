@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
-import { FileJson, FileSpreadsheet, FileImage, FileCode, FileText, Table2, Globe2 } from 'lucide-react';
+import { FileJson, FileSpreadsheet, FileImage, FileCode, FileText, Table2, Globe2, Database } from 'lucide-react';
 
 // Register the plugin
 gsap.registerPlugin(MotionPathPlugin);
@@ -56,6 +56,15 @@ const DataMachine = () => {
     const width = container.offsetWidth;
     const height = container.offsetHeight;
     
+    // Update tube path
+    const tubePath = container.querySelector('#tube-path') as SVGPathElement;
+    if (tubePath) {
+      tubePath.setAttribute('d', `M${width/2},${height/2} 
+        C${width/2},${height * 0.65} 
+        ${width/2},${height * 0.75} 
+        ${width/2},${height - 100}`);
+    }
+
     const centerX = width / 2;
     const centerY = height / 2;
     
@@ -211,6 +220,83 @@ const DataMachine = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const outputs = ['CSV', 'JSON', 'API', 'Database'];
+    let currentIndex = 0;
+
+    const rotateOutputs = () => {
+      // Remove active class from all elements
+      document.querySelectorAll('.output-icon, .output-text').forEach(el => {
+        el.classList.remove('active');
+      });
+
+      // Add active class to current elements
+      document.querySelectorAll('.output-icon')[currentIndex].classList.add('active');
+      document.querySelectorAll('.output-text')[currentIndex].classList.add('active');
+
+      // Update index
+      currentIndex = (currentIndex + 1) % outputs.length;
+    };
+
+    // Initial state
+    rotateOutputs();
+
+    // Rotate every 3 seconds
+    const interval = setInterval(rotateOutputs, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const createOutputParticle = (sourceType: 'api' | 'geospatial' | 'pdf') => {
+    const particle = document.createElement('div');
+    particle.className = `output-particle ${sourceType}`;
+    
+    // Set initial position at the start of the tube path
+    const pathElement = document.querySelector('#tube-path') as SVGPathElement;
+    if (!pathElement) return;
+    
+    const pathLength = pathElement.getTotalLength();
+    const startPoint = pathElement.getPointAtLength(0);
+    
+    particle.style.left = `${startPoint.x}px`;
+    particle.style.top = `${startPoint.y}px`;
+    
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.appendChild(particle);
+    
+    // Animate the particle along the tube path
+    gsap.to(particle, {
+      motionPath: {
+        path: '#tube-path',
+        align: '#tube-path',
+        autoRotate: true,
+        alignOrigin: [0.5, 0.5]
+      },
+      duration: 1.2 + Math.random() * 0.4,
+      ease: "power2.out",
+      onComplete: () => {
+        particle.remove();
+      }
+    });
+  };
+
+  // Create particles at intervals
+  useEffect(() => {
+    const createParticles = () => {
+      const sources: Array<'api' | 'geospatial' | 'pdf'> = ['api', 'geospatial', 'pdf'];
+      const randomSource = sources[Math.floor(Math.random() * sources.length)];
+      createOutputParticle(randomSource);
+    };
+
+    const particleInterval = setInterval(createParticles, 100);
+
+    return () => {
+      clearInterval(particleInterval);
+    };
+  }, []);
+
   return (
     <div ref={containerRef} className="relative w-full h-screen bg-gray-900 overflow-hidden">
       {/* Add a wrapper div for SVG and particles with lower z-index */}
@@ -225,6 +311,19 @@ const DataMachine = () => {
               </feMerge>
             </filter>
           </defs>
+          <path
+            id="tube-path"
+            d={`M${window.innerWidth/2},${window.innerHeight/2} 
+                C${window.innerWidth/2},${window.innerHeight * 0.65} 
+                ${window.innerWidth/2},${window.innerHeight * 0.75} 
+                ${window.innerWidth/2},${window.innerHeight - 100}`}
+            stroke="#4F46E5"
+            strokeWidth="4"
+            fill="none"
+            filter="url(#glow)"
+            className="tube-line"
+            style={{ opacity: 0.8 }}
+          />
           {[0, 1, 2, 3, 4, 5].map((index) => (
             <path
               key={index}
@@ -307,10 +406,23 @@ const DataMachine = () => {
         <div className="particle absolute w-4 h-4 bg-rose-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
 
-      {/* Output */}
+      {/* Multi-format Output */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
-        <Table2 className="w-16 h-16 text-indigo-400" />
-        <span className="text-indigo-200 font-semibold">CSV Output</span>
+        <div className="relative w-16 h-16">
+          <div className="output-particles-container"></div>
+          <div className="output-icon-container">
+            <Table2 className="w-16 h-16 text-indigo-400 absolute output-icon" />
+            <FileJson className="w-16 h-16 text-indigo-400 absolute output-icon" />
+            <FileCode className="w-16 h-16 text-indigo-400 absolute output-icon" />
+            <Database className="w-16 h-16 text-indigo-400 absolute output-icon" />
+          </div>
+        </div>
+        <div className="text-indigo-200 font-semibold output-text-container">
+          <span className="absolute output-text">CSV</span>
+          <span className="absolute output-text">JSON</span>
+          <span className="absolute output-text">API</span>
+          <span className="absolute output-text">Database</span>
+        </div>
       </div>
     </div>
   );

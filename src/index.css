@@ -29,3 +29,77 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+.output-icon {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.5s ease;
+}
+
+.output-icon.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.output-text {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.5s ease;
+}
+
+.output-text.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.output-icon-container, .output-text-container {
+  position: relative;
+}
+
+.output-particles-container {
+  pointer-events: none;
+  z-index: 30;
+  position: absolute;
+  inset: -100px;
+}
+
+.output-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  filter: blur(3px);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+}
+
+/* Particle colors for different sources */
+.output-particle.api {
+  background-color: #facc15; /* yellow-400 */
+  box-shadow: 0 0 12px #facc15;
+}
+
+.output-particle.geospatial {
+  background-color: #22d3ee; /* cyan-400 */
+  box-shadow: 0 0 12px #22d3ee;
+}
+
+.output-particle.pdf {
+  background-color: #fb7185; /* rose-400 */
+  box-shadow: 0 0 12px #fb7185;
+}
+
+.tube-line {
+  stroke-dasharray: 10;
+  animation: flow 1s linear infinite;
+  filter: drop-shadow(0 0 8px #4F46E5);
+}
+
+@keyframes flow {
+  from {
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
