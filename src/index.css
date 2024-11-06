@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-900 text-white;
+  }
+}
+
+.particle {
+  filter: blur(2px);
+  box-shadow: 0 0 15px currentColor;
+}
+
+.data-source {
+  transition: transform 0.3s ease;
+}
+
+.data-source:hover {
+  transform: scale(1.1);
+}
