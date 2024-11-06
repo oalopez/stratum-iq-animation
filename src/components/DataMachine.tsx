@@ -287,7 +287,7 @@ const DataMachine = () => {
       </div>
       <div className="data-source absolute flex flex-col items-center gap-2" style={{ bottom: '15%', right: '15%' }}>
         <FileCode className="w-12 h-12 text-yellow-400 relative z-20" />
-        <span className="text-yellow-400 text-sm font-medium">API</span>
+        <span className="text-yellow-400 text-sm font-medium">HTML</span>
         <div className="particle absolute w-4 h-4 bg-yellow-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
 
