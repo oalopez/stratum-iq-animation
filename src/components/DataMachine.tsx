@@ -11,64 +11,121 @@ const DataMachine = () => {
   const machineRef = useRef<HTMLDivElement>(null);
   const timeline = useRef<gsap.core.Timeline>();
 
-  useEffect(() => {
+  // Function to calculate path coordinates based on container size
+  const calculatePaths = () => {
     if (!containerRef.current) return;
-
-    timeline.current = gsap.timeline({ repeat: -1 });
     
-    // Enhanced machine pulse animation
-    gsap.to(machineRef.current, {
-      boxShadow: '0 0 50px rgba(99, 102, 241, 0.6)',
-      duration: 0.8,
-      repeat: -1,
-      yoyo: true,
-      ease: "power2.inOut"
-    });
+    const container = containerRef.current;
+    const width = container.offsetWidth;
+    const height = container.offsetHeight;
+    
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const padding = Math.min(width, height) * 0.1;
 
-    // Data source animations
-    const sources = containerRef.current.querySelectorAll('.data-source');
-    sources.forEach((source, index) => {
-      const particle = source.querySelector('.particle');
+    // Different curve pattern for each path
+    const paths = [
+      // Top left - S-curve
+      `M${padding},${padding} C${width * 0.1},${height * 0.5} ${width * 0.4},${height * 0.2} ${centerX},${centerY}`,
       
-      // Create recursive function for random particle generation
-      const createParticle = () => {
-        const clonedParticle = particle?.cloneNode(true) as HTMLElement;
-        source.appendChild(clonedParticle);
-        
-        // Random variations for more organic movement
-        const randomDuration = gsap.utils.random(2.5, 3.5);
-        const randomScale = gsap.utils.random(1.2, 1.8);
-        const randomOpacity = gsap.utils.random(0.6, 0.9);
-        
-        gsap.fromTo(clonedParticle,
-          { scale: 0, opacity: 0 },
-          {
-            scale: randomScale,
-            opacity: randomOpacity,
-            motionPath: {
-              path: `#path-${index}`,
-              align: `#path-${index}`,
-              autoRotate: true,
-              alignOrigin: [0.5, 0.5]
-            },
-            duration: randomDuration,
-            ease: "none",
-            onComplete: () => {
-              clonedParticle.remove(); // Clean up DOM
-            }
-          }
-        );
+      // Top right - wide arc
+      `M${width - padding},${padding} C${width * 0.9},${height * 0.6} ${width * 0.6},${height * 0.3} ${centerX},${centerY}`,
+      
+      // Bottom left - tight curve then straight
+      `M${padding},${height - padding} C${width * 0.15},${height * 0.7} ${width * 0.2},${centerY} ${centerX},${centerY}`,
+      
+      // Bottom right - wavy path
+      `M${width - padding},${height - padding} C${width * 0.7},${height * 0.8} ${width * 0.8},${height * 0.4} ${centerX},${centerY}`
+    ];
 
-        // Schedule next particle with random delay
-        gsap.delayedCall(gsap.utils.random(0.8, 1.5), createParticle);
-      };
-
-      // Start the particle generation with random initial delay
-      gsap.delayedCall(index * gsap.utils.random(0.3, 0.7), createParticle);
+    paths.forEach((path, index) => {
+      const pathElement = container.querySelector(`#path-${index}`) as SVGPathElement;
+      if (pathElement) {
+        pathElement.setAttribute('d', path);
+      }
     });
+  };
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      calculatePaths();
+      
+      // Kill existing animations
+      if (timeline.current) {
+        timeline.current.kill();
+      }
+      
+      // Restart animations
+      initializeAnimations();
+    };
+
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+    
+    // Initial calculation
+    calculatePaths();
 
     return () => {
-      timeline.current?.kill();
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Separate function for animations with fewer particles
+  const createParticle = (source: Element, index: number) => {
+    const particle = source.querySelector('.particle');
+    if (!particle) return;
+
+    const clonedParticle = particle.cloneNode(true) as HTMLElement;
+    source.appendChild(clonedParticle);
+    
+    const randomDuration = gsap.utils.random(3, 4);
+    const randomScale = gsap.utils.random(1.2, 1.6);
+    const randomOpacity = gsap.utils.random(0.6, 0.8);
+    
+    gsap.fromTo(clonedParticle,
+      { scale: 0, opacity: 0 },
+      {
+        scale: randomScale,
+        opacity: randomOpacity,
+        motionPath: {
+          path: `#path-${index}`,
+          align: `#path-${index}`,
+          autoRotate: true,
+          alignOrigin: [0.5, 0.5]
+        },
+        duration: randomDuration,
+        ease: "none",
+        onComplete: () => {
+          clonedParticle.remove();
+        }
+      }
+    );
+
+    // Much longer delay between particles (4 to 6 seconds)
+    gsap.delayedCall(gsap.utils.random(4, 6), () => createParticle(source, index));
+  };
+
+  const initializeAnimations = () => {
+    if (!containerRef.current) return;
+
+    const sources = containerRef.current.querySelectorAll('.data-source');
+    sources.forEach((source, index) => {
+      // Longer initial delay between sources (1 to 2 seconds)
+      gsap.delayedCall(index * gsap.utils.random(1, 2), () => {
+        createParticle(source, index);
+      });
+    });
+  };
+
+  // Initial animation setup
+  useEffect(() => {
+    initializeAnimations();
+    
+    return () => {
+      if (timeline.current) {
+        timeline.current.kill();
+      }
     };
   }, []);
 
@@ -86,43 +143,18 @@ const DataMachine = () => {
               </feMerge>
             </filter>
           </defs>
-          {/* Curved, glowing paths */}
-          <path 
-            id="path-0" 
-            d="M150,100 C250,150 350,200 500,300" 
-            stroke="#4F46E5" 
-            strokeWidth="3" 
-            fill="none" 
-            filter="url(#glow)" 
-            className="path-line"
-          />
-          <path 
-            id="path-1" 
-            d="M850,100 C750,150 650,200 500,300" 
-            stroke="#4F46E5" 
-            strokeWidth="3" 
-            fill="none" 
-            filter="url(#glow)" 
-            className="path-line"
-          />
-          <path 
-            id="path-2" 
-            d="M150,500 C250,450 350,400 500,300" 
-            stroke="#4F46E5" 
-            strokeWidth="3" 
-            fill="none" 
-            filter="url(#glow)" 
-            className="path-line"
-          />
-          <path 
-            id="path-3" 
-            d="M850,500 C750,450 650,400 500,300" 
-            stroke="#4F46E5" 
-            strokeWidth="3" 
-            fill="none" 
-            filter="url(#glow)" 
-            className="path-line"
-          />
+          {[0, 1, 2, 3].map((index) => (
+            <path
+              key={index}
+              id={`path-${index}`}
+              stroke="#4F46E5"
+              strokeWidth="3"
+              fill="none"
+              filter="url(#glow)"
+              className="path-line"
+              style={{ opacity: 0 }}
+            />
+          ))}
         </svg>
       </div>
 
@@ -143,19 +175,19 @@ const DataMachine = () => {
       </div>
 
       {/* Data Sources - Keep icons above (z-20) but particles below machine */}
-      <div className="data-source absolute top-20 left-20">
+      <div className="data-source absolute" style={{ top: '10%', left: '10%' }}>
         <FileJson className="w-12 h-12 text-blue-400 relative z-20" />
         <div className="particle absolute w-4 h-4 bg-blue-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
-      <div className="data-source absolute top-20 right-20">
+      <div className="data-source absolute" style={{ top: '10%', right: '10%' }}>
         <FileSpreadsheet className="w-12 h-12 text-green-400 relative z-20" />
         <div className="particle absolute w-4 h-4 bg-green-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
-      <div className="data-source absolute bottom-20 left-20">
+      <div className="data-source absolute" style={{ bottom: '10%', left: '10%' }}>
         <FileImage className="w-12 h-12 text-purple-400 relative z-20" />
         <div className="particle absolute w-4 h-4 bg-purple-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
-      <div className="data-source absolute bottom-20 right-20">
+      <div className="data-source absolute" style={{ bottom: '10%', right: '10%' }}>
         <FileCode className="w-12 h-12 text-yellow-400 relative z-20" />
         <div className="particle absolute w-4 h-4 bg-yellow-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
