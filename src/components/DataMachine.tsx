@@ -26,6 +26,7 @@ const DataMachine = () => {
         min: 3,
         max: 4
       },
+      endScale: 0.6,
       // Time between particles from same source
       frequency: {
         min: 1,
@@ -58,12 +59,12 @@ const DataMachine = () => {
     const centerX = width / 2;
     const centerY = height / 2;
     
-    // Get icon positions (matching the positions in JSX)
+    // Get icon positions (matching the new positions in JSX)
     const iconPositions = {
-      topLeft: { x: width * 0.1, y: height * 0.1 },      // 10% from top-left
-      topRight: { x: width * 0.9, y: height * 0.1 },     // 10% from top-right
-      bottomLeft: { x: width * 0.1, y: height * 0.9 },   // 10% from bottom-left
-      bottomRight: { x: width * 0.9, y: height * 0.9 }   // 10% from bottom-right
+      topLeft: { x: width * 0.15, y: height * 0.15 },      // 15% from top-left
+      topRight: { x: width * 0.85, y: height * 0.15 },     // 15% from top-right
+      bottomLeft: { x: width * 0.15, y: height * 0.85 },   // 15% from bottom-left
+      bottomRight: { x: width * 0.85, y: height * 0.85 }   // 15% from bottom-right
     };
 
     // Different curve pattern for each path, starting from icon centers
@@ -92,10 +93,16 @@ const DataMachine = () => {
        ${width * 0.8},${height * 0.4} 
        ${centerX},${centerY}`,
       
-      // Add new path for geospatial data (right side)
-      `M${width * 0.9},${height * 0.5} 
+      // Geospatial data path - starting from right middle
+      `M${width * 0.88},${height * 0.5} 
        C${width * 0.7},${height * 0.5} 
        ${width * 0.6},${height * 0.5} 
+       ${centerX},${centerY}`,
+      
+      // PDF data path - new path from bottom center
+      `M${width * 0.5},${height * 0.88} 
+       C${width * 0.5},${height * 0.7} 
+       ${width * 0.5},${height * 0.6} 
        ${centerX},${centerY}`
     ];
 
@@ -147,7 +154,7 @@ const DataMachine = () => {
     gsap.fromTo(clonedParticle,
       { scale: randomScale, opacity: randomOpacity },
       {
-        scale: 0,
+        scale: 0.6,
         opacity: 0,
         motionPath: {
           path: `#path-${index}`,
@@ -262,30 +269,31 @@ const DataMachine = () => {
         </div>
       </div>
 
-      {/* Data Sources - positioned at 10% from edges */}
-      <div className="data-source absolute flex flex-col items-center gap-2" style={{ top: '10%', left: '10%' }}>
+      {/* Data Sources - positioned at 15% from edges */}
+      <div className="data-source absolute flex flex-col items-center gap-2" style={{ top: '15%', left: '15%' }}>
         <FileJson className="w-12 h-12 text-blue-400 relative z-20" />
         <span className="text-blue-400 text-sm font-medium">JSON Data</span>
         <div className="particle absolute w-4 h-4 bg-blue-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
-      <div className="data-source absolute flex flex-col items-center gap-2" style={{ top: '10%', right: '10%' }}>
+      <div className="data-source absolute flex flex-col items-center gap-2" style={{ top: '15%', right: '15%' }}>
         <FileSpreadsheet className="w-12 h-12 text-green-400 relative z-20" />
         <span className="text-green-400 text-sm font-medium">Spreadsheet</span>
         <div className="particle absolute w-4 h-4 bg-green-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
-      <div className="data-source absolute flex flex-col items-center gap-2" style={{ bottom: '10%', left: '10%' }}>
+      <div className="data-source absolute flex flex-col items-center gap-2" style={{ bottom: '15%', left: '15%' }}>
         <FileImage className="w-12 h-12 text-purple-400 relative z-20" />
         <span className="text-purple-400 text-sm font-medium">Image Data</span>
         <div className="particle absolute w-4 h-4 bg-purple-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
-      <div className="data-source absolute flex flex-col items-center gap-2" style={{ bottom: '10%', right: '10%' }}>
+      <div className="data-source absolute flex flex-col items-center gap-2" style={{ bottom: '15%', right: '15%' }}>
         <FileCode className="w-12 h-12 text-yellow-400 relative z-20" />
-        <span className="text-yellow-400 text-sm font-medium">Code Files</span>
+        <span className="text-yellow-400 text-sm font-medium">API</span>
         <div className="particle absolute w-4 h-4 bg-yellow-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
 
-      {/* New Geospatial Data Source */}
-      <div className="data-source absolute flex flex-col items-center gap-2" style={{ top: '50%', right: '10%', transform: 'translateY(-50%)' }}>
+      {/* Geospatial Data Source */}
+      <div className="data-source absolute flex flex-col items-center gap-2" 
+           style={{ top: '50%', right: '12%', transform: 'translateY(-50%)' }}>
         <Globe2 className="w-12 h-12 text-cyan-400 relative z-20" />
         <span className="text-cyan-400 text-sm font-medium">Geospatial</span>
         <div className="particle absolute w-4 h-4 bg-cyan-400 rounded-full scale-0 opacity-0 z-5"></div>
