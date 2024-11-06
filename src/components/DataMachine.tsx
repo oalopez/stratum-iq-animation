@@ -341,28 +341,32 @@ const DataMachine = () => {
       {/* Update machine div with inner rings */}
       <div 
         ref={machineRef}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-indigo-600 rounded-xl transform rotate-45 shadow-2xl z-10"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-xl transform rotate-45 shadow-2xl z-10"
         style={{ 
           perspective: '1000px',
-          filter: 'drop-shadow(0 0 20px rgba(99, 102, 241, 0.4))'
+          filter: 'drop-shadow(0 0 20px rgba(29, 156, 156, 0.4))',
+          backgroundColor: '#1D9C9C'
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-xl border-2 border-indigo-400/50">
+        <div className="absolute inset-0 rounded-xl border-2 border-[#1D9C9C]/50"
+             style={{ background: 'linear-gradient(135deg, #1D9C9C 0%, #105069 100%)' }}>
           {/* Inner mechanism container */}
-          <div className="absolute inset-4 border-2 border-indigo-400/50 rounded-lg overflow-hidden">
+          <div className="absolute inset-4 border-2 border-[#1D9C9C]/50 rounded-lg overflow-hidden">
             {/* Animated rings */}
             <div className="absolute inset-0 rounded-lg">
               {/* Outer ring */}
-              <div className="absolute inset-2 border-4 border-indigo-400/30 rounded-full animate-[spin_8s_linear_infinite]" />
+              <div className="absolute inset-2 border-4 border-[#1D9C9C]/30 rounded-full animate-[spin_8s_linear_infinite]" />
               {/* Middle ring */}
-              <div className="absolute inset-6 border-4 border-indigo-300/40 rounded-full animate-[spin_6s_linear_infinite_reverse]" />
+              <div className="absolute inset-6 border-4 border-[#1D9C9C]/40 rounded-full animate-[spin_6s_linear_infinite_reverse]" />
               {/* Inner ring */}
-              <div className="absolute inset-10 border-4 border-indigo-200/50 rounded-full animate-[spin_4s_linear_infinite]" />
+              <div className="absolute inset-10 border-4 border-[#105069]/50 rounded-full animate-[spin_4s_linear_infinite]" />
               {/* Center pulse */}
-              <div className="absolute inset-12 bg-indigo-400/50 rounded-full animate-pulse" />
+              <div className="absolute inset-12 rounded-full animate-pulse"
+                   style={{ backgroundColor: 'rgba(29, 156, 156, 0.5)' }} />
             </div>
             {/* Overlay gradient */}
-            <div className="absolute inset-0 bg-indigo-500/20 rounded-lg"></div>
+            <div className="absolute inset-0 rounded-lg"
+                 style={{ background: 'linear-gradient(135deg, rgba(29, 156, 156, 0.2), rgba(16, 80, 105, 0.2))' }}></div>
           </div>
         </div>
       </div>
