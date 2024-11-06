@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
-import { FileJson, FileSpreadsheet, FileImage, FileCode, FileText, Table2 } from 'lucide-react';
+import { FileJson, FileSpreadsheet, FileImage, FileCode, FileText, Table2, Globe2 } from 'lucide-react';
 
 // Register the plugin
 gsap.registerPlugin(MotionPathPlugin);
@@ -90,6 +90,12 @@ const DataMachine = () => {
       `M${iconPositions.bottomRight.x},${iconPositions.bottomRight.y} 
        C${width * 0.7},${height * 0.8} 
        ${width * 0.8},${height * 0.4} 
+       ${centerX},${centerY}`,
+      
+      // Add new path for geospatial data (right side)
+      `M${width * 0.9},${height * 0.5} 
+       C${width * 0.7},${height * 0.5} 
+       ${width * 0.6},${height * 0.5} 
        ${centerX},${centerY}`
     ];
 
@@ -164,14 +170,26 @@ const DataMachine = () => {
   };
 
   const initializeAnimations = () => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !machineRef.current) return;
 
+    // Existing particle animations
     const sources = containerRef.current.querySelectorAll('.data-source');
     sources.forEach((source, index) => {
       gsap.delayedCall(
         index * gsap.utils.random(CONFIG.sources.startDelay.min, CONFIG.sources.startDelay.max),
         () => createParticle(source, index)
       );
+    });
+
+    // Optional: Add GSAP animations for the rings
+    const rings = machineRef.current.querySelectorAll('.ring');
+    rings.forEach((ring, index) => {
+      gsap.to(ring, {
+        rotate: index % 2 === 0 ? 360 : -360,
+        duration: 4 + index * 2,
+        repeat: -1,
+        ease: "none"
+      });
     });
   };
 
@@ -200,7 +218,7 @@ const DataMachine = () => {
               </feMerge>
             </filter>
           </defs>
-          {[0, 1, 2, 3].map((index) => (
+          {[0, 1, 2, 3, 4].map((index) => (
             <path
               key={index}
               id={`path-${index}`}
@@ -215,7 +233,7 @@ const DataMachine = () => {
         </svg>
       </div>
 
-      {/* Update machine div to have higher z-index */}
+      {/* Update machine div with inner rings */}
       <div 
         ref={machineRef}
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-indigo-600 rounded-xl transform rotate-45 shadow-2xl z-10"
@@ -225,28 +243,52 @@ const DataMachine = () => {
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-xl border-2 border-indigo-400/50">
-          <div className="absolute inset-4 border-2 border-indigo-400/50 rounded-lg">
-            <div className="absolute inset-0 bg-indigo-500/20 rounded-lg animate-pulse"></div>
+          {/* Inner mechanism container */}
+          <div className="absolute inset-4 border-2 border-indigo-400/50 rounded-lg overflow-hidden">
+            {/* Animated rings */}
+            <div className="absolute inset-0 rounded-lg">
+              {/* Outer ring */}
+              <div className="absolute inset-2 border-4 border-indigo-400/30 rounded-full animate-[spin_8s_linear_infinite]" />
+              {/* Middle ring */}
+              <div className="absolute inset-6 border-4 border-indigo-300/40 rounded-full animate-[spin_6s_linear_infinite_reverse]" />
+              {/* Inner ring */}
+              <div className="absolute inset-10 border-4 border-indigo-200/50 rounded-full animate-[spin_4s_linear_infinite]" />
+              {/* Center pulse */}
+              <div className="absolute inset-12 bg-indigo-400/50 rounded-full animate-pulse" />
+            </div>
+            {/* Overlay gradient */}
+            <div className="absolute inset-0 bg-indigo-500/20 rounded-lg"></div>
           </div>
         </div>
       </div>
 
       {/* Data Sources - positioned at 10% from edges */}
-      <div className="data-source absolute" style={{ top: '10%', left: '10%' }}>
+      <div className="data-source absolute flex flex-col items-center gap-2" style={{ top: '10%', left: '10%' }}>
         <FileJson className="w-12 h-12 text-blue-400 relative z-20" />
+        <span className="text-blue-400 text-sm font-medium">JSON Data</span>
         <div className="particle absolute w-4 h-4 bg-blue-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
-      <div className="data-source absolute" style={{ top: '10%', right: '10%' }}>
+      <div className="data-source absolute flex flex-col items-center gap-2" style={{ top: '10%', right: '10%' }}>
         <FileSpreadsheet className="w-12 h-12 text-green-400 relative z-20" />
+        <span className="text-green-400 text-sm font-medium">Spreadsheet</span>
         <div className="particle absolute w-4 h-4 bg-green-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
-      <div className="data-source absolute" style={{ bottom: '10%', left: '10%' }}>
+      <div className="data-source absolute flex flex-col items-center gap-2" style={{ bottom: '10%', left: '10%' }}>
         <FileImage className="w-12 h-12 text-purple-400 relative z-20" />
+        <span className="text-purple-400 text-sm font-medium">Image Data</span>
         <div className="particle absolute w-4 h-4 bg-purple-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
-      <div className="data-source absolute" style={{ bottom: '10%', right: '10%' }}>
+      <div className="data-source absolute flex flex-col items-center gap-2" style={{ bottom: '10%', right: '10%' }}>
         <FileCode className="w-12 h-12 text-yellow-400 relative z-20" />
+        <span className="text-yellow-400 text-sm font-medium">Code Files</span>
         <div className="particle absolute w-4 h-4 bg-yellow-400 rounded-full scale-0 opacity-0 z-5"></div>
+      </div>
+
+      {/* New Geospatial Data Source */}
+      <div className="data-source absolute flex flex-col items-center gap-2" style={{ top: '50%', right: '10%', transform: 'translateY(-50%)' }}>
+        <Globe2 className="w-12 h-12 text-cyan-400 relative z-20" />
+        <span className="text-cyan-400 text-sm font-medium">Geospatial</span>
+        <div className="particle absolute w-4 h-4 bg-cyan-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
 
       {/* Output */}
