@@ -12,20 +12,22 @@ const DataMachine = () => {
 
     timeline.current = gsap.timeline({ repeat: -1 });
     
-    // Machine pulse animation
+    // Enhanced machine pulse animation
     gsap.to(machineRef.current, {
-      boxShadow: '0 0 30px rgba(99, 102, 241, 0.4)',
-      duration: 1,
+      boxShadow: '0 0 50px rgba(99, 102, 241, 0.6)',
+      duration: 0.8,
       repeat: -1,
-      yoyo: true
+      yoyo: true,
+      ease: "power2.inOut"
     });
 
     // Data source animations
     const sources = containerRef.current.querySelectorAll('.data-source');
     sources.forEach((source, index) => {
       const particle = source.querySelector('.particle');
-      const delay = index * 0.25;
+      const delay = index * 0.3;
 
+      // Create continuous flow effect
       timeline.current?.to(particle, {
         scale: 1,
         opacity: 1,
@@ -34,16 +36,53 @@ const DataMachine = () => {
       }).to(particle, {
         motionPath: {
           path: `#path-${index}`,
-          align: "#path-${index}",
+          align: `#path-${index}`,
           autoRotate: true
         },
-        duration: 1.5,
-        ease: "power1.inOut"
+        duration: 2,
+        ease: "none"
       }).to(particle, {
         scale: 0,
         opacity: 0,
         duration: 0.3
       }, "-=0.3");
+
+      // Create multiple particles per path for continuous flow
+      for (let i = 0; i < 3; i++) {
+        const clonedParticle = particle?.cloneNode(true) as HTMLElement;
+        source.appendChild(clonedParticle);
+        
+        gsap.to(clonedParticle, {
+          scale: 1,
+          opacity: 1,
+          duration: 0.3,
+          delay: delay + (i * 0.7),
+          repeat: -1,
+          repeatDelay: 1.4,
+        });
+
+        gsap.to(clonedParticle, {
+          motionPath: {
+            path: `#path-${index}`,
+            align: `#path-${index}`,
+            autoRotate: true
+          },
+          duration: 2,
+          delay: delay + (i * 0.7),
+          repeat: -1,
+          repeatDelay: 1.4,
+          ease: "none"
+        });
+
+        gsap.to(clonedParticle, {
+          scale: 0,
+          opacity: 0,
+          duration: 0.3,
+          delay: delay + (i * 0.7) + 1.7,
+          repeat: -1,
+          repeatDelay: 1.4,
+        });
+      }
     });
 
     return () => {
@@ -56,49 +95,83 @@ const DataMachine = () => {
       {/* SVG Paths */}
       <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: 'none' }}>
         <defs>
-          <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#4F46E5" />
-            <stop offset="100%" stopColor="#818CF8" />
-          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
         </defs>
-        {/* Define paths for each data source */}
-        <path
-          id="path-0"
-          d="M200,100 Q400,200 500,300"  // Adjusted from original coordinates
-          fill="none"
-          strokeWidth="8"
-          stroke="url(#pathGradient)"
+        {/* Curved, glowing paths */}
+        <path 
+          id="path-0" 
+          d="M150,100 C200,100 250,200 350,220 S450,250 500,300" 
+          stroke="#4F46E5" 
+          strokeWidth="3" 
+          fill="none" 
+          filter="url(#glow)" 
+          className="path-line"
         />
-        <path id="path-1" d="M800,100 Q600,200 500,300" stroke="url(#pathGradient)" strokeWidth="8" fill="none" />
-        <path id="path-2" d="M200,500 Q400,400 500,300" stroke="url(#pathGradient)" strokeWidth="8" fill="none" />
-        <path id="path-3" d="M800,500 Q600,400 500,300" stroke="rgba(255,255,255,0.1)" strokeWidth="8" fill="none" />
+        <path 
+          id="path-1" 
+          d="M850,100 C800,100 750,200 650,220 S550,250 500,300" 
+          stroke="#4F46E5" 
+          strokeWidth="3" 
+          fill="none" 
+          filter="url(#glow)" 
+          className="path-line"
+        />
+        <path 
+          id="path-2" 
+          d="M150,500 C200,500 250,400 350,380 S450,350 500,300" 
+          stroke="#4F46E5" 
+          strokeWidth="3" 
+          fill="none" 
+          filter="url(#glow)" 
+          className="path-line"
+        />
+        <path 
+          id="path-3" 
+          d="M850,500 C800,500 750,400 650,380 S550,350 500,300" 
+          stroke="#4F46E5" 
+          strokeWidth="3" 
+          fill="none" 
+          filter="url(#glow)" 
+          className="path-line"
+        />
       </svg>
 
-      {/* Central Machine */}
+      {/* Enhanced Central Machine */}
       <div 
         ref={machineRef}
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-indigo-600 rounded-xl transform rotate-45 shadow-2xl"
-        style={{ perspective: '1000px' }}
+        style={{ 
+          perspective: '1000px',
+          filter: 'drop-shadow(0 0 20px rgba(99, 102, 241, 0.4))'
+        }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-xl border-2 border-indigo-400/30">
-          <div className="absolute inset-4 border-2 border-indigo-400/30 rounded-lg"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-xl border-2 border-indigo-400/50">
+          <div className="absolute inset-4 border-2 border-indigo-400/50 rounded-lg">
+            <div className="absolute inset-0 bg-indigo-500/20 rounded-lg animate-pulse"></div>
+          </div>
         </div>
       </div>
 
       {/* Data Sources */}
-      <div className="data-source absolute top-20 left-40">
+      <div className="data-source absolute top-20 left-20">
         <FileJson className="w-12 h-12 text-blue-400" />
         <div className="particle absolute w-4 h-4 bg-blue-400 rounded-full scale-0 opacity-0"></div>
       </div>
-      <div className="data-source absolute top-20 right-40">
+      <div className="data-source absolute top-20 right-20">
         <FileSpreadsheet className="w-12 h-12 text-green-400" />
         <div className="particle absolute w-4 h-4 bg-green-400 rounded-full scale-0 opacity-0"></div>
       </div>
-      <div className="data-source absolute bottom-20 left-40">
+      <div className="data-source absolute bottom-20 left-20">
         <FileImage className="w-12 h-12 text-purple-400" />
         <div className="particle absolute w-4 h-4 bg-purple-400 rounded-full scale-0 opacity-0"></div>
       </div>
-      <div className="data-source absolute bottom-20 right-40">
+      <div className="data-source absolute bottom-20 right-20">
         <FileCode className="w-12 h-12 text-yellow-400" />
         <div className="particle absolute w-4 h-4 bg-yellow-400 rounded-full scale-0 opacity-0"></div>
       </div>
