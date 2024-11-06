@@ -1,6 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { FileJson, FileSpreadsheet, FileImage, FileCode, FileText, Table2 } from 'lucide-react';
+
+// Register the plugin
+gsap.registerPlugin(MotionPathPlugin);
 
 const DataMachine = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -106,7 +110,7 @@ const DataMachine = () => {
         {/* Curved, glowing paths */}
         <path 
           id="path-0" 
-          d="M150,100 C200,100 250,200 350,220 S450,250 500,300" 
+          d="M150,100 C250,150 350,200 500,300" 
           stroke="#4F46E5" 
           strokeWidth="3" 
           fill="none" 
@@ -115,7 +119,7 @@ const DataMachine = () => {
         />
         <path 
           id="path-1" 
-          d="M850,100 C800,100 750,200 650,220 S550,250 500,300" 
+          d="M850,100 C750,150 650,200 500,300" 
           stroke="#4F46E5" 
           strokeWidth="3" 
           fill="none" 
@@ -124,7 +128,7 @@ const DataMachine = () => {
         />
         <path 
           id="path-2" 
-          d="M150,500 C200,500 250,400 350,380 S450,350 500,300" 
+          d="M150,500 C250,450 350,400 500,300" 
           stroke="#4F46E5" 
           strokeWidth="3" 
           fill="none" 
@@ -133,7 +137,7 @@ const DataMachine = () => {
         />
         <path 
           id="path-3" 
-          d="M850,500 C800,500 750,400 650,380 S550,350 500,300" 
+          d="M850,500 C750,450 650,400 500,300" 
           stroke="#4F46E5" 
           strokeWidth="3" 
           fill="none" 
