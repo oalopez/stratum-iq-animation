@@ -56,62 +56,61 @@ const DataMachine = () => {
     const width = container.offsetWidth;
     const height = container.offsetHeight;
     
-    // Update tube path
-    const tubePath = container.querySelector('#tube-path') as SVGPathElement;
-    if (tubePath) {
-      tubePath.setAttribute('d', `M${width/2},${height/2} 
-        C${width/2},${height * 0.65} 
-        ${width/2},${height * 0.75} 
-        ${width/2},${height - 100}`);
-    }
+    // Keep icons at outer positions (12%)
+    const iconPositions = {
+      topLeft: { x: width * 0.12, y: height * 0.12 },
+      topRight: { x: width * 0.88, y: height * 0.12 },
+      bottomLeft: { x: width * 0.12, y: height * 0.88 },
+      bottomRight: { x: width * 0.88, y: height * 0.88 },
+    };
+
+    // Path starting points (moved to 20% instead of 25%)
+    const pathStarts = {
+      topLeft: { x: width * 0.20, y: height * 0.20 },     // Changed from 0.25 to 0.20
+      topRight: { x: width * 0.80, y: height * 0.20 },    // Changed from 0.75 to 0.80
+      bottomLeft: { x: width * 0.20, y: height * 0.80 },  // Changed from 0.25 to 0.20
+      bottomRight: { x: width * 0.80, y: height * 0.80 }, // Changed from 0.75 to 0.80
+    };
 
     const centerX = width / 2;
     const centerY = height / 2;
-    
-    // Get icon positions (matching the new positions in JSX)
-    const iconPositions = {
-      topLeft: { x: width * 0.15, y: height * 0.15 },      // 15% from top-left
-      topRight: { x: width * 0.85, y: height * 0.15 },     // 15% from top-right
-      bottomLeft: { x: width * 0.15, y: height * 0.85 },   // 15% from bottom-left
-      bottomRight: { x: width * 0.85, y: height * 0.85 }   // 15% from bottom-right
-    };
 
-    // Different curve pattern for each path, starting from icon centers
+    // Adjust control points accordingly
     const paths = [
       // Top left - S-curve
-      `M${iconPositions.topLeft.x},${iconPositions.topLeft.y} 
-       C${width * 0.1},${height * 0.5} 
-       ${width * 0.4},${height * 0.2} 
+      `M${pathStarts.topLeft.x},${pathStarts.topLeft.y} 
+       C${width * 0.25},${height * 0.35} 
+       ${width * 0.35},${height * 0.25} 
        ${centerX},${centerY}`,
       
       // Top right - wide arc
-      `M${iconPositions.topRight.x},${iconPositions.topRight.y} 
-       C${width * 0.9},${height * 0.6} 
-       ${width * 0.6},${height * 0.3} 
+      `M${pathStarts.topRight.x},${pathStarts.topRight.y} 
+       C${width * 0.75},${height * 0.35} 
+       ${width * 0.65},${height * 0.25} 
        ${centerX},${centerY}`,
       
-      // Bottom left - tight curve then straight
-      `M${iconPositions.bottomLeft.x},${iconPositions.bottomLeft.y} 
-       C${width * 0.15},${height * 0.7} 
-       ${width * 0.2},${centerY} 
+      // Bottom left - tight curve
+      `M${pathStarts.bottomLeft.x},${pathStarts.bottomLeft.y} 
+       C${width * 0.25},${height * 0.65} 
+       ${width * 0.35},${height * 0.75} 
        ${centerX},${centerY}`,
       
       // Bottom right - wavy path
-      `M${iconPositions.bottomRight.x},${iconPositions.bottomRight.y} 
-       C${width * 0.7},${height * 0.8} 
-       ${width * 0.8},${height * 0.4} 
+      `M${pathStarts.bottomRight.x},${pathStarts.bottomRight.y} 
+       C${width * 0.75},${height * 0.65} 
+       ${width * 0.65},${height * 0.75} 
        ${centerX},${centerY}`,
       
-      // Geospatial data path - starting from right middle
-      `M${width * 0.88},${height * 0.5} 
-       C${width * 0.7},${height * 0.5} 
-       ${width * 0.6},${height * 0.5} 
+      // Geospatial data path
+      `M${width * 0.80},${height * 0.5} 
+       C${width * 0.70},${height * 0.5} 
+       ${width * 0.65},${height * 0.5} 
        ${centerX},${centerY}`,
       
-      // PDF data path - new path from bottom center
-      `M${width * 0.5},${height * 0.12} 
-       C${width * 0.5},${height * 0.3} 
-       ${width * 0.5},${height * 0.4} 
+      // PDF data path
+      `M${width * 0.5},${height * 0.20} 
+       C${width * 0.5},${height * 0.30} 
+       ${width * 0.5},${height * 0.35} 
        ${centerX},${centerY}`
     ];
 
@@ -368,23 +367,27 @@ const DataMachine = () => {
         </div>
       </div>
 
-      {/* Data Sources - positioned at 15% from edges */}
-      <div className="data-source absolute flex flex-col items-center gap-2" style={{ top: '15%', left: '15%' }}>
+      {/* Data Sources - icons moved outward, particles stay at original positions */}
+      <div className="data-source absolute flex flex-col items-center gap-2" 
+           style={{ top: '15%', left: '15%', transform: 'translate(-20px, -20px)' }}>
         <FileJson className="w-12 h-12 text-blue-400 relative z-20" />
         <span className="text-blue-400 text-sm font-medium">JSON Data</span>
-        <div className="particle absolute w-4 h-4 bg-blue-400 rounded-full scale-0 opacity-0 z-5"></div>
+        <div className="particle absolute w-4 h-4 bg-blue-400 rounded-full scale-0 opacity-0 z-5" 
+             style={{ transform: 'translate(20px, 20px)' }}></div>
       </div>
-      <div className="data-source absolute flex flex-col items-center gap-2" style={{ top: '15%', right: '15%' }}>
+      <div className="data-source absolute flex flex-col items-center gap-2" 
+           style={{ top: '15%', right: '15%', transform: 'translate(20px, -20px)' }}>
         <FileSpreadsheet className="w-12 h-12 text-green-400 relative z-20" />
         <span className="text-green-400 text-sm font-medium">Spreadsheet</span>
-        <div className="particle absolute w-4 h-4 bg-green-400 rounded-full scale-0 opacity-0 z-5"></div>
+        <div className="particle absolute w-4 h-4 bg-green-400 rounded-full scale-0 opacity-0 z-5" 
+             style={{ transform: 'translate(-20px, 20px)' }}></div>
       </div>
-      <div className="data-source absolute flex flex-col items-center gap-2" style={{ bottom: '15%', left: '15%' }}>
+      <div className="data-source absolute flex flex-col items-center gap-2" style={{ bottom: '12%', left: '12%' }}>
         <FileImage className="w-12 h-12 text-purple-400 relative z-20" />
         <span className="text-purple-400 text-sm font-medium">Image Data</span>
         <div className="particle absolute w-4 h-4 bg-purple-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
-      <div className="data-source absolute flex flex-col items-center gap-2" style={{ bottom: '15%', right: '15%' }}>
+      <div className="data-source absolute flex flex-col items-center gap-2" style={{ bottom: '12%', right: '12%' }}>
         <FileCode className="w-12 h-12 text-yellow-400 relative z-20" />
         <span className="text-yellow-400 text-sm font-medium">HTML</span>
         <div className="particle absolute w-4 h-4 bg-yellow-400 rounded-full scale-0 opacity-0 z-5"></div>
