@@ -100,9 +100,9 @@ const DataMachine = () => {
        ${centerX},${centerY}`,
       
       // PDF data path - new path from bottom center
-      `M${width * 0.5},${height * 0.88} 
-       C${width * 0.5},${height * 0.7} 
-       ${width * 0.5},${height * 0.6} 
+      `M${width * 0.5},${height * 0.12} 
+       C${width * 0.5},${height * 0.3} 
+       ${width * 0.5},${height * 0.4} 
        ${centerX},${centerY}`
     ];
 
@@ -225,7 +225,7 @@ const DataMachine = () => {
               </feMerge>
             </filter>
           </defs>
-          {[0, 1, 2, 3, 4].map((index) => (
+          {[0, 1, 2, 3, 4, 5].map((index) => (
             <path
               key={index}
               id={`path-${index}`}
@@ -297,6 +297,14 @@ const DataMachine = () => {
         <Globe2 className="w-12 h-12 text-cyan-400 relative z-20" />
         <span className="text-cyan-400 text-sm font-medium">Geospatial</span>
         <div className="particle absolute w-4 h-4 bg-cyan-400 rounded-full scale-0 opacity-0 z-5"></div>
+      </div>
+
+      {/* PDF Files Source */}
+      <div className="data-source absolute flex flex-col items-center gap-2" 
+           style={{ top: '12%', left: '50%', transform: 'translateX(-50%)' }}>
+        <FileText className="w-12 h-12 text-rose-400 relative z-20" />
+        <span className="text-rose-400 text-sm font-medium">PDF Files</span>
+        <div className="particle absolute w-4 h-4 bg-rose-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
 
       {/* Output */}
