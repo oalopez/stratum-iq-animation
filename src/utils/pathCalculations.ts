@@ -6,7 +6,10 @@ export const calculateDataPaths = (width: number, height: number) => {
   const radius = 200;
 
   return DATA_SOURCES.map((_, index) => {
-    const angle = (index * (2 * Math.PI / DATA_SOURCES.length)) - (Math.PI / 2);
+    const totalAngle = 2 * Math.PI - (120 * Math.PI / 180);
+    const angleOffset = -Math.PI / 2;
+    const startAngle = angleOffset - (totalAngle / 2);
+    const angle = startAngle + (index * (totalAngle / DATA_SOURCES.length));
     const x = centerX + Math.cos(angle) * radius;
     const y = centerY + Math.sin(angle) * radius;
 

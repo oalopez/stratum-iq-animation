@@ -28,7 +28,7 @@ const DataMachine = () => {
     
     const paths = calculateDataPaths(width, height);
     
-    paths.forEach((path, index) => {
+    paths.forEach((path: string, index: number) => {
       const pathElement = container.querySelector(`#path-${index}`) as SVGPathElement;
       if (pathElement) {
         pathElement.setAttribute('d', path);
@@ -158,7 +158,7 @@ const DataMachine = () => {
                 style={{
                   fill: "none",
                   stroke: "url(#tunnelGradient)",
-                  strokeWidth: 8 - (index * 2),
+                  strokeWidth: 20 - (index * 2),
                   opacity: 0.6 - (index * 0.15),
                   filter: "url(#tunnelGlow)"
                 }}
@@ -170,7 +170,7 @@ const DataMachine = () => {
               d={calculateTubePath(window.innerWidth, window.innerHeight)}
               className="tunnel-flow"
               strokeDasharray="4 12"
-              strokeWidth="2"
+              strokeWidth="15"
               stroke="#1D9C9C"
               fill="none"
             />
@@ -222,11 +222,12 @@ const DataMachine = () => {
 
       {/* Data Sources in circular pattern */}
       {DATA_SOURCES.map((source, index) => {
-        // Calculate position in circle, leaving a 30-degree space
-        const totalAngle = 2 * Math.PI - (30 * Math.PI / 180); // Total angle minus 30 degrees
-        const angleOffset = (5 * Math.PI / 6); // Offset to start the gap at 5 o'clock
-        const angle = (index * (totalAngle / DATA_SOURCES.length)) + angleOffset; // Adjust for space
-        const radius = 200; // Distance from center
+        // Calculate position in circle, leaving a space at the bottom
+        const totalAngle = 2 * Math.PI - (120 * Math.PI / 180); // Total angle minus 120 degrees
+        const angleOffset = -Math.PI / 2; // Start at 12 o'clock (-90 degrees)
+        const startAngle = angleOffset - (totalAngle / 2); // Distribute evenly around the circle
+        const angle = startAngle + (index * (totalAngle / DATA_SOURCES.length));
+        const radius = 200;
         const x = Math.cos(angle) * radius;
         const y = Math.sin(angle) * radius;
 
