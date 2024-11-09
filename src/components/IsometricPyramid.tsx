@@ -6,7 +6,12 @@ interface PyramidFace {
   className: string;
 }
 
-const IsometricPyramid: React.FC = () => {
+interface IsometricPyramidProps {
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+const IsometricPyramid: React.FC<IsometricPyramidProps> = ({ className, style }) => {
   // Base size of the pyramid (square base)
   const baseSize = 100;
   
@@ -50,7 +55,8 @@ const IsometricPyramid: React.FC = () => {
     <div className="isometric-pyramid">
       <svg 
         viewBox={`${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`}
-        className="w-full h-full"
+        className={`w-full h-full ${className}`}
+        style={style}
       >
         <defs>
           <linearGradient id="frontGradient" x1="0%" y1="0%" x2="100%" y2="100%">
