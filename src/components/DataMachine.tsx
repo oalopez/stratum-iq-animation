@@ -197,7 +197,12 @@ const DataMachine = () => {
       >
         <div className="relative">
           {/* Background glow */}
-          <div className="absolute inset-0 blur-xl bg-[#1D9C9C]/20 rounded-full" />
+          <div className="absolute inset-0 -inset-4 blur-lg bg-[#1D9C9C]/10 rounded-full" 
+               style={{
+                 background: 'radial-gradient(circle at center, rgba(29, 156, 156, 0.15) 0%, rgba(29, 156, 156, 0) 70%)',
+                 transform: 'scale(1.2)',
+               }} 
+          />
           
           {/* Pyramid icon */}
           <div className="relative">

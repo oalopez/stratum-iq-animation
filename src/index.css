@@ -18,11 +18,11 @@
 
 .data-source {
   transition: filter 0.3s ease;
-  filter: drop-shadow(0 0 5px currentColor);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .data-source:hover {
-  filter: drop-shadow(0 0 10px currentColor);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
 }
 
 .path-line {
