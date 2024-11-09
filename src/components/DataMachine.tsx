@@ -222,8 +222,10 @@ const DataMachine = () => {
 
       {/* Data Sources in circular pattern */}
       {DATA_SOURCES.map((source, index) => {
-        // Calculate position in circle
-        const angle = (index * (2 * Math.PI / DATA_SOURCES.length)) - (Math.PI / 2); // Start from top
+        // Calculate position in circle, leaving a 30-degree space
+        const totalAngle = 2 * Math.PI - (30 * Math.PI / 180); // Total angle minus 30 degrees
+        const angleOffset = (5 * Math.PI / 6); // Offset to start the gap at 5 o'clock
+        const angle = (index * (totalAngle / DATA_SOURCES.length)) + angleOffset; // Adjust for space
         const radius = 200; // Distance from center
         const x = Math.cos(angle) * radius;
         const y = Math.sin(angle) * radius;
