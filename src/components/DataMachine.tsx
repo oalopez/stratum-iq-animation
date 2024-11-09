@@ -81,17 +81,6 @@ const DataMachine = () => {
         () => createParticle(source, index)
       );
     });
-
-    // Optional: Add GSAP animations for the rings
-    const rings = machineRef.current.querySelectorAll('.ring');
-    rings.forEach((ring, index) => {
-      gsap.to(ring, {
-        rotate: index % 2 === 0 ? 360 : -360,
-        duration: 4 + index * 2,
-        repeat: -1,
-        ease: "none"
-      });
-    });
   };
 
   // Initial animation setup
@@ -203,7 +192,7 @@ const DataMachine = () => {
       {/* Central Machine with Pyramid Icon */}
       <div 
         ref={machineRef}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 z-10 flex items-center justify-center"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 z-10 flex items-center justify-center"
       >
         <div className="relative">
           {/* Background glow */}
@@ -211,9 +200,9 @@ const DataMachine = () => {
           
           {/* Pyramid icon */}
           <div className="relative">
-            {/* Pyramid Icon */}
+            {/* Pyramid Icon with animation */}
             <Pyramid 
-              className="w-24 h-24 text-[#1D9C9C] transform transition-all duration-500"
+              className="w-40 h-40 text-[#1D9C9C] transform transition-all duration-500 pyramid-icon"
               style={{
                 filter: 'drop-shadow(0 0 20px rgba(29, 156, 156, 0.4))'
               }}

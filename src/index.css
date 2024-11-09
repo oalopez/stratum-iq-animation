@@ -230,3 +230,39 @@
 .-rotate-y-30 {
   transform: rotateY(-30deg);
 }
+
+.pyramid-icon {
+  animation: processData 3s ease-in-out infinite;
+}
+
+.processing-ring {
+  animation: spin 8s linear infinite;
+}
+
+.processing-ring-reverse {
+  animation: spin 6s linear infinite reverse;
+}
+
+@keyframes processData {
+  0% {
+    transform: scale(1) translateY(0);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1) translateY(-5px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 0.8;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
