@@ -8,10 +8,10 @@ interface PyramidFace {
 
 const IsometricPyramid: React.FC = () => {
   // Base size of the pyramid (square base)
-  const baseSize = 400;
+  const baseSize = 100;
   
   // Calculate edge length (1.2x the base edge)
-  const edgeLength = baseSize * 1.2;
+  const edgeLength = baseSize * 1;
   
   // Calculate peak height using Pythagorean theorem
   const peakHeight = Math.floor(Math.sqrt(Math.pow(edgeLength, 2) - Math.pow(baseSize/2, 2)));
@@ -22,25 +22,25 @@ const IsometricPyramid: React.FC = () => {
   // Calculate SVG viewBox dimensions with proper centering
   const viewBoxWidth = baseSize * 1.5;
   const viewBoxHeight = (baseSize + peakHeight) * 1.2;
-  const viewBoxX = -baseSize * 0.25;  // Adjust these values to center
-  const viewBoxY = -baseSize * 0.1;   // Adjust these values to center
+  const viewBoxX = -baseSize * 0.25;
+  const viewBoxY = -peakHeight * -0.3; // Adjusted to center the peak
 
   const faces: PyramidFace[] = [
     // Front face
     {
-      points: `${centerX},0 0,${baseSize} ${baseSize},${baseSize}`,
+      points: `${centerX},${peakHeight} 0,${baseSize + peakHeight} ${baseSize},${baseSize + peakHeight}`,
       gradientId: 'frontGradient',
       className: 'pyramid-face front'
     },
     // Left face
     {
-      points: `0,${baseSize} ${centerX},0 ${centerX},${peakHeight}`,
+      points: `0,${baseSize + peakHeight} ${centerX},${peakHeight} ${centerX},${baseSize + peakHeight}`,
       gradientId: 'leftGradient',
       className: 'pyramid-face left'
     },
     // Right face
     {
-      points: `${baseSize},${baseSize} ${centerX},0 ${centerX},${peakHeight}`,
+      points: `${baseSize},${baseSize + peakHeight} ${centerX},${peakHeight} ${centerX},${baseSize + peakHeight}`,
       gradientId: 'rightGradient',
       className: 'pyramid-face right'
     }
@@ -69,7 +69,7 @@ const IsometricPyramid: React.FC = () => {
           </linearGradient>
 
           <filter id="pyramidGlow">
-            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feGaussianBlur stdDeviation="0.5" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
         </defs>

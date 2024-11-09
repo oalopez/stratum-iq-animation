@@ -213,7 +213,7 @@ const DataMachine = () => {
             <div 
               className="absolute inset-0 rounded-full animate-pulse"
               style={{ 
-                background: 'radial-gradient(circle, rgba(29, 156, 156, 0.3) 0%, rgba(29, 156, 156, 0) 70%)'
+                background: 'radial-gradient(circle, rgba(29, 156, 156, 0.15) 0%, rgba(29, 156, 156, 0) 10%)'
               }} 
             />
           </div>
