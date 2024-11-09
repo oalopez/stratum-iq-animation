@@ -30,6 +30,7 @@
   stroke: #1D9C9C;
   stroke-linecap: round;
   stroke-linejoin: round;
+  will-change: opacity;
 }
 
 .output-icon {
@@ -74,6 +75,9 @@
   filter: blur(3px);
   opacity: 0;
   transform: translate(-50%, -50%);
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 /* Particle colors for different sources */

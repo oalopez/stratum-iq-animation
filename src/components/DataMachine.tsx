@@ -23,21 +23,21 @@ const DataMachine = () => {
         max: 0.8
       },
       duration: {
-        min: 3,
-        max: 4
+        min: 4,
+        max: 5
       },
       endScale: 0.6,
       // Time between particles from same source
       frequency: {
-        min: 1,
-        max: 2
+        min: 2,
+        max: 3
       }
     },
     sources: {
       // Initial delay between different sources starting
       startDelay: {
-        min: 1,
-        max: 2
+        min: 2,
+        max: 3
       }
     },
     paths: {
@@ -222,50 +222,52 @@ const DataMachine = () => {
   useEffect(() => {
     const outputs = ['CSV', 'JSON', 'API', 'Database'];
     let currentIndex = 0;
+    let rafId: number;
 
     const rotateOutputs = () => {
-      // Remove active class from all elements
-      document.querySelectorAll('.output-icon, .output-text').forEach(el => {
-        el.classList.remove('active');
+      // Batch DOM operations
+      requestAnimationFrame(() => {
+        const icons = document.querySelectorAll('.output-icon');
+        const texts = document.querySelectorAll('.output-text');
+        
+        icons.forEach((el, idx) => {
+          el.classList.toggle('active', idx === currentIndex);
+        });
+        
+        texts.forEach((el, idx) => {
+          el.classList.toggle('active', idx === currentIndex);
+        });
+
+        currentIndex = (currentIndex + 1) % outputs.length;
       });
-
-      // Add active class to current elements
-      document.querySelectorAll('.output-icon')[currentIndex].classList.add('active');
-      document.querySelectorAll('.output-text')[currentIndex].classList.add('active');
-
-      // Update index
-      currentIndex = (currentIndex + 1) % outputs.length;
     };
 
-    // Initial state
     rotateOutputs();
-
-    // Rotate every 3 seconds
     const interval = setInterval(rotateOutputs, 3000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   const createOutputParticle = (sourceType: 'api' | 'geospatial' | 'pdf') => {
     const particle = document.createElement('div');
     particle.className = `output-particle ${sourceType}`;
     
-    // Set initial position at the start of the tube path
     const pathElement = document.querySelector('#tube-path') as SVGPathElement;
     if (!pathElement) return;
     
-    const pathLength = pathElement.getTotalLength();
     const startPoint = pathElement.getPointAtLength(0);
     
-    particle.style.left = `${startPoint.x}px`;
-    particle.style.top = `${startPoint.y}px`;
+    // Use transform instead of left/top
+    particle.style.transform = `translate(${startPoint.x}px, ${startPoint.y}px)`;
     
     const container = containerRef.current;
     if (!container) return;
 
     container.appendChild(particle);
     
-    // Animate the particle along the tube path
     gsap.to(particle, {
       motionPath: {
         path: '#tube-path',
@@ -273,7 +275,7 @@ const DataMachine = () => {
         autoRotate: true,
         alignOrigin: [0.5, 0.5]
       },
-      duration: 1.2 + Math.random() * 0.4,
+      duration: 1.5+ Math.random() * 0.4, // Slightly longer duration
       ease: "power2.out",
       onComplete: () => {
         particle.remove();
@@ -289,7 +291,8 @@ const DataMachine = () => {
       createOutputParticle(randomSource);
     };
 
-    const particleInterval = setInterval(createParticles, 100);
+    // Increased interval from 100ms to 250ms
+    const particleInterval = setInterval(createParticles, 250);
 
     return () => {
       clearInterval(particleInterval);
