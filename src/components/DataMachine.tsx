@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
-import { Pyramid } from 'lucide-react';
 import { OUTPUT_FORMATS, ANIMATION_CONFIG, DATA_SOURCES } from '../config/animation.config';
 import { calculateDataPaths, calculateTubePath } from '../utils/pathCalculations';
 import { useParticleSystem } from '../hooks/useParticleSystem';
 import * as Icons from 'lucide-react';
+import IsometricPyramid from './IsometricPyramid';
 
 // Register the plugin
 gsap.registerPlugin(MotionPathPlugin);
@@ -202,7 +202,7 @@ const DataMachine = () => {
           {/* Pyramid icon */}
           <div className="relative">
             {/* Pyramid Icon with animation */}
-            <Pyramid 
+            <IsometricPyramid 
               className="w-40 h-40 text-[#1D9C9C] transform transition-all duration-500 pyramid-icon"
               style={{
                 filter: 'drop-shadow(0 0 20px rgba(29, 156, 156, 0.4))'
