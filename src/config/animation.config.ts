@@ -1,3 +1,5 @@
+import { Table2, FileJson, FileCode, Database } from 'lucide-react';
+
 export const ANIMATION_CONFIG = {
   particles: {
     scale: {
@@ -41,8 +43,8 @@ export const DATA_SOURCES = [
 ];
 
 export const OUTPUT_FORMATS = [
-  { type: 'csv', icon: 'Table2', label: 'CSV' },
-  { type: 'json', icon: 'FileJson', label: 'JSON' },
-  { type: 'api', icon: 'FileCode', label: 'API' },
-  { type: 'database', icon: 'Database', label: 'Database' }
+  { type: 'csv', icon: Table2, label: 'CSV' },
+  { type: 'json', icon: FileJson, label: 'JSON' },
+  { type: 'api', icon: FileCode, label: 'API' },
+  { type: 'database', icon: Database, label: 'Database' }
 ]; 

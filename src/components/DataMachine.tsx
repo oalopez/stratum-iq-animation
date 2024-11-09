@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
-import { FileJson, FileSpreadsheet, FileImage, FileCode, FileText, Table2, Globe2, Database } from 'lucide-react';
+import { FileJson, FileSpreadsheet, FileImage, FileCode, Globe2, FileText } from 'lucide-react';
+import { OUTPUT_FORMATS } from '../config/animation.config';
 
 // Register the plugin
 gsap.registerPlugin(MotionPathPlugin);
@@ -10,6 +11,7 @@ const DataMachine = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const machineRef = useRef<HTMLDivElement>(null);
   const timeline = useRef<gsap.core.Timeline>();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   // Animation configuration parameters
   const CONFIG = {
@@ -266,34 +268,11 @@ const DataMachine = () => {
 
   useEffect(() => {
     const outputs = ['CSV', 'JSON', 'API', 'Database'];
-    let currentIndex = 0;
-    let rafId: number;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % outputs.length);
+    }, 3000); // Changed to 3000ms for slower transitions
 
-    const rotateOutputs = () => {
-      // Batch DOM operations
-      requestAnimationFrame(() => {
-        const icons = document.querySelectorAll('.output-icon');
-        const texts = document.querySelectorAll('.output-text');
-        
-        icons.forEach((el, idx) => {
-          el.classList.toggle('active', idx === currentIndex);
-        });
-        
-        texts.forEach((el, idx) => {
-          el.classList.toggle('active', idx === currentIndex);
-        });
-
-        currentIndex = (currentIndex + 1) % outputs.length;
-      });
-    };
-
-    rotateOutputs();
-    const interval = setInterval(rotateOutputs, 3000);
-
-    return () => {
-      clearInterval(interval);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   const createOutputParticle = (sourceType: 'api' | 'geospatial' | 'pdf') => {
@@ -508,21 +487,33 @@ const DataMachine = () => {
       </div>
 
       {/* Multi-format Output */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
-        <div className="relative w-16 h-16">
-          <div className="output-particles-container"></div>
-          <div className="output-icon-container">
-            <Table2 className="w-16 h-16 text-indigo-400 absolute output-icon" />
-            <FileJson className="w-16 h-16 text-indigo-400 absolute output-icon" />
-            <FileCode className="w-16 h-16 text-indigo-400 absolute output-icon" />
-            <Database className="w-16 h-16 text-indigo-400 absolute output-icon" />
-          </div>
-        </div>
-        <div className="text-indigo-200 font-semibold output-text-container">
-          <span className="absolute output-text">CSV</span>
-          <span className="absolute output-text">JSON</span>
-          <span className="absolute output-text">API</span>
-          <span className="absolute output-text">Database</span>
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4">
+        <div className="relative flex gap-8">
+          {OUTPUT_FORMATS.map((format, index) => {
+            const Icon = format.icon;
+            return (
+              <div key={format.type} className="relative">
+                <div className="output-icon-container">
+                  {/* Glow container */}
+                  <div className="glow-container"></div>
+                  {/* Icon */}
+                  <Icon 
+                    className={`output-icon w-12 h-12 ${index === currentIndex ? 'active' : ''}`}
+                    style={{
+                      transition: 'all 0.5s ease',
+                      transformOrigin: 'center'
+                    }}
+                  />
+                </div>
+                <span 
+                  className={`output-text absolute top-full left-1/2 transform -translate-x-1/2 mt-2 
+                             text-[#1D9C9C] text-sm font-medium ${index === currentIndex ? 'active' : ''}`}
+                >
+                  {format.label}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
