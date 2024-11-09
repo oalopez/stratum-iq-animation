@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-white text-gray-800;
+    @apply bg-background text-gray-800;
   }
 }
 
@@ -27,14 +27,14 @@
 
 .path-line {
   opacity: 0.3;
-  stroke: #1D9C9C;
+  stroke: theme('colors.primary');
   stroke-linecap: round;
   stroke-linejoin: round;
   will-change: opacity;
 }
 
 .output-icon {
-  color: #105069;
+  color: theme('colors.secondary');
   opacity: 0;
   transform: scale(0.8);
   transition: all 0.8s ease;
@@ -96,18 +96,18 @@
 
 /* Particle colors for different sources */
 .output-particle.api {
-  background-color: #1D9C9C;
-  box-shadow: 0 0 12px #1D9C9C;
+  background-color: theme('colors.primary');
+  box-shadow: 0 0 12px theme('colors.primary');
 }
 
 .output-particle.geospatial {
-  background-color: #105069;
-  box-shadow: 0 0 12px #105069;
+  background-color: theme('colors.secondary');
+  box-shadow: 0 0 12px theme('colors.secondary');
 }
 
 .output-particle.pdf {
-  background-color: #1D9C9C;
-  box-shadow: 0 0 12px #1D9C9C;
+  background-color: theme('colors.primary');
+  box-shadow: 0 0 12px theme('colors.primary');
 }
 
 .tube-line {
@@ -117,12 +117,12 @@
 }
 
 @keyframes gradientFlow {
-  0% { stroke: #1D9C9C; }
-  20% { stroke: #105069; }
-  40% { stroke: #1D9C9C; }
-  60% { stroke: #105069; }
-  80% { stroke: #1D9C9C; }
-  100% { stroke: #105069; }
+  0% { stroke: theme('colors.primary'); }
+  20% { stroke: theme('colors.secondary'); }
+  40% { stroke: theme('colors.primary'); }
+  60% { stroke: theme('colors.secondary'); }
+  80% { stroke: theme('colors.primary'); }
+  100% { stroke: theme('colors.secondary'); }
 }
 
 @keyframes flow {

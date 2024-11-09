@@ -121,7 +121,7 @@ const DataMachine = () => {
   }, [createOutputParticle]);
 
   return (
-    <div ref={containerRef} className="relative w-full h-screen bg-gray-900 overflow-hidden">
+    <div ref={containerRef} className="relative w-full h-screen bg-background overflow-hidden">
       {/* Add a wrapper div for SVG and particles with lower z-index */}
       <div className="absolute inset-0 z-0">
         <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: 'none' }}>
