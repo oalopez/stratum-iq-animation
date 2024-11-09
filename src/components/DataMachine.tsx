@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
-import { FileJson, FileSpreadsheet, FileImage, FileCode, Globe2, FileText } from 'lucide-react';
+import { FileJson, FileSpreadsheet, FileImage, FileCode, Globe2, FileText, Pyramid } from 'lucide-react';
 import { OUTPUT_FORMATS, ANIMATION_CONFIG } from '../config/animation.config';
 import { calculateDataPaths, calculateTubePath } from '../utils/pathCalculations';
 import { useParticleSystem } from '../hooks/useParticleSystem';
@@ -200,35 +200,32 @@ const DataMachine = () => {
         </svg>
       </div>
 
-      {/* Update machine div with inner rings */}
+      {/* Central Machine with Pyramid Icon */}
       <div 
         ref={machineRef}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-xl transform rotate-45 shadow-2xl z-10"
-        style={{ 
-          perspective: '1000px',
-          filter: 'drop-shadow(0 0 20px rgba(29, 156, 156, 0.4))',
-          backgroundColor: '#1D9C9C'
-        }}
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 z-10 flex items-center justify-center"
       >
-        <div className="absolute inset-0 rounded-xl border-2 border-[#1D9C9C]/50"
-             style={{ background: 'linear-gradient(135deg, #1D9C9C 0%, #105069 100%)' }}>
-          {/* Inner mechanism container */}
-          <div className="absolute inset-4 border-2 border-[#1D9C9C]/50 rounded-lg overflow-hidden">
-            {/* Animated rings */}
-            <div className="absolute inset-0 rounded-lg">
-              {/* Outer ring */}
-              <div className="absolute inset-2 border-4 border-[#1D9C9C]/30 rounded-full animate-[spin_8s_linear_infinite]" />
-              {/* Middle ring */}
-              <div className="absolute inset-6 border-4 border-[#1D9C9C]/40 rounded-full animate-[spin_6s_linear_infinite_reverse]" />
-              {/* Inner ring */}
-              <div className="absolute inset-10 border-4 border-[#105069]/50 rounded-full animate-[spin_4s_linear_infinite]" />
-              {/* Center pulse */}
-              <div className="absolute inset-12 rounded-full animate-pulse"
-                   style={{ backgroundColor: 'rgba(29, 156, 156, 0.5)' }} />
-            </div>
-            {/* Overlay gradient */}
-            <div className="absolute inset-0 rounded-lg"
-                 style={{ background: 'linear-gradient(135deg, rgba(29, 156, 156, 0.2), rgba(16, 80, 105, 0.2))' }}></div>
+        <div className="relative">
+          {/* Background glow */}
+          <div className="absolute inset-0 blur-xl bg-[#1D9C9C]/20 rounded-full" />
+          
+          {/* Pyramid icon */}
+          <div className="relative">
+            {/* Pyramid Icon */}
+            <Pyramid 
+              className="w-24 h-24 text-[#1D9C9C] transform transition-all duration-500"
+              style={{
+                filter: 'drop-shadow(0 0 20px rgba(29, 156, 156, 0.4))'
+              }}
+            />
+            
+            {/* Center pulse */}
+            <div 
+              className="absolute inset-0 rounded-full animate-pulse"
+              style={{ 
+                background: 'radial-gradient(circle, rgba(29, 156, 156, 0.3) 0%, rgba(29, 156, 156, 0) 70%)'
+              }} 
+            />
           </div>
         </div>
       </div>

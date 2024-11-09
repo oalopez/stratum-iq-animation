@@ -205,3 +205,28 @@
 .output-icon:not(.active) {
   filter: drop-shadow(0 0 5px #105069);
 }
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.transform-3d {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.origin-bottom-middle {
+  transform-origin: bottom center;
+}
+
+.rotate-x-30 {
+  transform: rotateX(30deg);
+}
+
+.rotate-y-30 {
+  transform: rotateY(30deg);
+}
+
+.-rotate-y-30 {
+  transform: rotateY(-30deg);
+}
