@@ -48,6 +48,21 @@ const DataMachine = () => {
     }
   };
 
+  const PARTICLE_LIMITS = {
+    sources: {
+      maxPerSource: 3,
+      total: 18  // 6 sources × 3 particles each
+    },
+    output: {
+      max: 5
+    }
+  };
+
+  const particleTracking = {
+    sources: new Map<number, HTMLElement[]>(),
+    output: new Set<HTMLElement>()
+  };
+
   // Function to calculate path coordinates based on container size
   const calculatePaths = () => {
     if (!containerRef.current) return;
@@ -129,7 +144,20 @@ const DataMachine = () => {
       if (!containerRef.current) return;
       const width = containerRef.current.offsetWidth;
       const height = containerRef.current.offsetHeight;
+
+      // Clear all particle tracking
+      particleTracking.sources.clear();
+      particleTracking.output.clear();
+
+      // Remove all existing particles from DOM
+      containerRef.current.querySelectorAll('.particle').forEach(p => p.remove());
+      containerRef.current.querySelectorAll('.output-particle').forEach(p => p.remove());
       
+      // Kill existing animations
+      if (timeline.current) {
+        timeline.current.kill();
+      }
+
       // Update particle paths
       calculatePaths();
       
@@ -137,11 +165,6 @@ const DataMachine = () => {
       const tubePath = document.querySelector('#tube-path') as SVGPathElement;
       if (tubePath) {
         tubePath.setAttribute('d', calculateTubePath(width, height));
-      }
-      
-      // Kill existing animations
-      if (timeline.current) {
-        timeline.current.kill();
       }
       
       // Restart animations
@@ -164,8 +187,17 @@ const DataMachine = () => {
     const particle = source.querySelector('.particle');
     if (!particle) return;
 
+    // Check if we've reached the limit for this source
+    const existingParticles = particleTracking.sources.get(index) || [];
+    if (existingParticles.length >= PARTICLE_LIMITS.sources.maxPerSource) {
+      return;
+    }
+
     const clonedParticle = particle.cloneNode(true) as HTMLElement;
     source.appendChild(clonedParticle);
+    
+    // Track the new particle
+    particleTracking.sources.set(index, [...existingParticles, clonedParticle]);
     
     const randomDuration = gsap.utils.random(CONFIG.particles.duration.min, CONFIG.particles.duration.max);
     const randomScale = gsap.utils.random(CONFIG.particles.scale.min, CONFIG.particles.scale.max);
@@ -185,15 +217,24 @@ const DataMachine = () => {
         duration: randomDuration,
         ease: "none",
         onComplete: () => {
+          // Remove from tracking and DOM
+          const particles = particleTracking.sources.get(index) || [];
+          particleTracking.sources.set(
+            index,
+            particles.filter(p => p !== clonedParticle)
+          );
           clonedParticle.remove();
         }
       }
     );
 
-    gsap.delayedCall(
-      gsap.utils.random(CONFIG.particles.frequency.min, CONFIG.particles.frequency.max), 
-      () => createParticle(source, index)
-    );
+    // Schedule next particle only if below limit
+    if (existingParticles.length < PARTICLE_LIMITS.sources.maxPerSource) {
+      gsap.delayedCall(
+        gsap.utils.random(CONFIG.particles.frequency.min, CONFIG.particles.frequency.max), 
+        () => createParticle(source, index)
+      );
+    }
   };
 
   const initializeAnimations = () => {
@@ -264,6 +305,11 @@ const DataMachine = () => {
   }, []);
 
   const createOutputParticle = (sourceType: 'api' | 'geospatial' | 'pdf') => {
+    // Check if we've reached the output particle limit
+    if (particleTracking.output.size >= PARTICLE_LIMITS.output.max) {
+      return;
+    }
+
     const particle = document.createElement('div');
     particle.className = `output-particle ${sourceType}`;
     
@@ -271,14 +317,13 @@ const DataMachine = () => {
     if (!pathElement) return;
     
     const startPoint = pathElement.getPointAtLength(0);
-    
-    // Use transform instead of left/top
     particle.style.transform = `translate(${startPoint.x}px, ${startPoint.y}px)`;
     
     const container = containerRef.current;
     if (!container) return;
 
     container.appendChild(particle);
+    particleTracking.output.add(particle);
     
     gsap.to(particle, {
       motionPath: {
@@ -287,9 +332,10 @@ const DataMachine = () => {
         autoRotate: true,
         alignOrigin: [0.5, 0.5]
       },
-      duration: 1.5+ Math.random() * 0.4, // Slightly longer duration
+      duration: 1.5 + Math.random() * 0.4,
       ease: "power2.out",
       onComplete: () => {
+        particleTracking.output.delete(particle);
         particle.remove();
       }
     });
