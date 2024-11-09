@@ -248,8 +248,14 @@ const DataMachine = () => {
               {source.label}
             </span>
             <div 
-              className={`particle absolute w-4 h-4 ${source.color.replace('text-', 'bg-')} rounded-full scale-0 z-5`}
+              className={`particle absolute w-4 h-4 rounded-full scale-0 z-5`}
               style={{
+                backgroundColor: source.color.includes('blue') ? '#2563eb' : 
+                                source.color.includes('green') ? '#16a34a' :
+                                source.color.includes('purple') ? '#9333ea' :
+                                source.color.includes('yellow') ? '#ca8a04' :
+                                source.color.includes('cyan') ? '#0891b2' :
+                                source.color.includes('rose') ? '#e11d48' : '#1D9C9C',
                 opacity: 0,
                 filter: 'blur(4px)',
                 boxShadow: '0 0 15px currentColor'
@@ -265,9 +271,9 @@ const DataMachine = () => {
         <div className="relative">
           {/* Background container with gradient - further reduced size */}
           <div className="w-36 h-36 relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#1D9C9C]/20 to-[#105069]/20 
-                            backdrop-blur-sm rounded-xl border border-[#1D9C9C]/30
-                            shadow-[0_0_15px_rgba(29,156,156,0.3)]">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#1D9C9C]/10 to-[#105069]/10 
+                            backdrop-blur-sm rounded-xl border border-[#1D9C9C]/20
+                            shadow-[0_0_10px_rgba(29,156,156,0.15)]">
               {/* Inner content - minimal padding */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="grid grid-cols-2 gap-2 p-2">

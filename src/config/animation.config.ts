@@ -62,12 +62,12 @@ export const PARTICLE_LIMITS = {
 };
 
 export const DATA_SOURCES = [
-  { type: 'json', color: 'text-blue-400', label: 'JSON Data', icon: 'FileJson' },
-  { type: 'spreadsheet', color: 'text-green-400', label: 'Spreadsheet', icon: 'FileSpreadsheet' },
-  { type: 'image', color: 'text-purple-400', label: 'Image Data', icon: 'FileImage' },
-  { type: 'html', color: 'text-yellow-400', label: 'HTML', icon: 'FileCode' },
-  { type: 'geospatial', color: 'text-cyan-400', label: 'Geospatial', icon: 'Globe2' },
-  { type: 'pdf', color: 'text-rose-400', label: 'PDF Files', icon: 'FileText' }
+  { type: 'json', color: 'text-blue-600', label: 'JSON Data', icon: 'FileJson' },
+  { type: 'spreadsheet', color: 'text-green-600', label: 'Spreadsheet', icon: 'FileSpreadsheet' },
+  { type: 'image', color: 'text-purple-600', label: 'Image Data', icon: 'FileImage' },
+  { type: 'html', color: 'text-yellow-600', label: 'HTML', icon: 'FileCode' },
+  { type: 'geospatial', color: 'text-cyan-600', label: 'Geospatial', icon: 'Globe2' },
+  { type: 'pdf', color: 'text-rose-600', label: 'PDF Files', icon: 'FileText' }
 ];
 
 export const OUTPUT_FORMATS = [

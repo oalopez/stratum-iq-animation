@@ -6,7 +6,7 @@ export default {
         colors: {
           primary: '#1D9C9C',
           secondary: '#105069',
-          background: '#ffffff',  // '#111827' for dark mode, #ffffff for light mode
+          background: '#111827',  // '#111827' for dark mode, #ffffff for light mode
         }
       },
     },
