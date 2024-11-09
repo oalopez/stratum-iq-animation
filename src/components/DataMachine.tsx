@@ -359,9 +359,9 @@ const DataMachine = () => {
           <g className="tunnel-effect">
             <defs>
               <linearGradient id="tunnelGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#4F46E5" stopOpacity="0.1"/>
-                <stop offset="50%" stopColor="#4F46E5" stopOpacity="0.3"/>
-                <stop offset="100%" stopColor="#4F46E5" stopOpacity="0.1"/>
+                <stop offset="0%" stopColor="#1D9C9C" stopOpacity="0.1"/>
+                <stop offset="50%" stopColor="#1D9C9C" stopOpacity="0.3"/>
+                <stop offset="100%" stopColor="#105069" stopOpacity="0.1"/>
               </linearGradient>
               
               <filter id="tunnelGlow">
@@ -392,7 +392,7 @@ const DataMachine = () => {
               className="tunnel-flow"
               strokeDasharray="4 12"
               strokeWidth="2"
-              stroke="#6366F1"
+              stroke="#1D9C9C"
               fill="none"
             />
           </g>
