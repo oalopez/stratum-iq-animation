@@ -5,5 +5,10 @@ export default {
       extend: {},
     },
     plugins: [],
+    safelist: [
+      {
+        pattern: /(bg|text)-(blue|green|purple|yellow|cyan|rose)-400/,
+      }
+    ],
   };
   

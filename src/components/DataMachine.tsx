@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
-import { FileJson, FileSpreadsheet, FileImage, FileCode, Globe2, FileText, Pyramid } from 'lucide-react';
-import { OUTPUT_FORMATS, ANIMATION_CONFIG } from '../config/animation.config';
+import { Pyramid } from 'lucide-react';
+import { OUTPUT_FORMATS, ANIMATION_CONFIG, DATA_SOURCES } from '../config/animation.config';
 import { calculateDataPaths, calculateTubePath } from '../utils/pathCalculations';
 import { useParticleSystem } from '../hooks/useParticleSystem';
+import * as Icons from 'lucide-react';
 
 // Register the plugin
 gsap.registerPlugin(MotionPathPlugin);
@@ -219,47 +220,41 @@ const DataMachine = () => {
         </div>
       </div>
 
-      {/* Data Sources - icons moved outward, particles stay at original positions */}
-      <div className="data-source absolute flex flex-col items-center gap-2" 
-           style={{ top: '15%', left: '15%', transform: 'translate(-20px, -20px)' }}>
-        <FileJson className="w-12 h-12 text-blue-400 relative z-20" />
-        <span className="text-blue-400 text-sm font-medium">JSON Data</span>
-        <div className="particle absolute w-4 h-4 bg-blue-400 rounded-full scale-0 opacity-0 z-5" 
-             style={{ transform: 'translate(20px, 20px)' }}></div>
-      </div>
-      <div className="data-source absolute flex flex-col items-center gap-2" 
-           style={{ top: '15%', right: '15%', transform: 'translate(20px, -20px)' }}>
-        <FileSpreadsheet className="w-12 h-12 text-green-400 relative z-20" />
-        <span className="text-green-400 text-sm font-medium">Spreadsheet</span>
-        <div className="particle absolute w-4 h-4 bg-green-400 rounded-full scale-0 opacity-0 z-5" 
-             style={{ transform: 'translate(-20px, 20px)' }}></div>
-      </div>
-      <div className="data-source absolute flex flex-col items-center gap-2" style={{ bottom: '12%', left: '12%' }}>
-        <FileImage className="w-12 h-12 text-purple-400 relative z-20" />
-        <span className="text-purple-400 text-sm font-medium">Image Data</span>
-        <div className="particle absolute w-4 h-4 bg-purple-400 rounded-full scale-0 opacity-0 z-5"></div>
-      </div>
-      <div className="data-source absolute flex flex-col items-center gap-2" style={{ bottom: '12%', right: '12%' }}>
-        <FileCode className="w-12 h-12 text-yellow-400 relative z-20" />
-        <span className="text-yellow-400 text-sm font-medium">HTML</span>
-        <div className="particle absolute w-4 h-4 bg-yellow-400 rounded-full scale-0 opacity-0 z-5"></div>
-      </div>
+      {/* Data Sources in circular pattern */}
+      {DATA_SOURCES.map((source, index) => {
+        // Calculate position in circle
+        const angle = (index * (2 * Math.PI / DATA_SOURCES.length)) - (Math.PI / 2); // Start from top
+        const radius = 200; // Distance from center
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
 
-      {/* Geospatial Data Source */}
-      <div className="data-source absolute flex flex-col items-center gap-2" 
-           style={{ top: '50%', right: '12%', transform: 'translateY(-50%)' }}>
-        <Globe2 className="w-12 h-12 text-cyan-400 relative z-20" />
-        <span className="text-cyan-400 text-sm font-medium">Geospatial</span>
-        <div className="particle absolute w-4 h-4 bg-cyan-400 rounded-full scale-0 opacity-0 z-5"></div>
-      </div>
-
-      {/* PDF Files Source */}
-      <div className="data-source absolute flex flex-col items-center gap-2" 
-           style={{ top: '12%', left: '50%', transform: 'translateX(-50%)' }}>
-        <FileText className="w-12 h-12 text-rose-400 relative z-20" />
-        <span className="text-rose-400 text-sm font-medium">PDF Files</span>
-        <div className="particle absolute w-4 h-4 bg-rose-400 rounded-full scale-0 opacity-0 z-5"></div>
-      </div>
+        return (
+          <div 
+            key={source.type}
+            className="data-source absolute flex flex-col items-center gap-2"
+            style={{ 
+              left: '50%',
+              top: '50%',
+              transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`
+            }}
+          >
+            {React.createElement(Icons[source.icon as keyof typeof Icons] as React.ComponentType<any>, {
+              className: `w-12 h-12 ${source.color} relative z-20`
+            })}
+            <span className={`${source.color} text-sm font-medium`}>
+              {source.label}
+            </span>
+            <div 
+              className={`particle absolute w-4 h-4 ${source.color.replace('text-', 'bg-')} rounded-full scale-0 z-5`}
+              style={{
+                opacity: 0,
+                filter: 'blur(4px)',
+                boxShadow: '0 0 15px currentColor'
+              }}
+            />
+          </div>
+        );
+      })}
 
       {/* Multi-format Output Container */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4">

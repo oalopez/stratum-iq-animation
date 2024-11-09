@@ -1,58 +1,20 @@
-interface PathStarts {
-  topLeft: { x: number; y: number };
-  topRight: { x: number; y: number };
-  bottomLeft: { x: number; y: number };
-  bottomRight: { x: number; y: number };
-}
+import { DATA_SOURCES } from '../config/animation.config';
 
 export const calculateDataPaths = (width: number, height: number) => {
-  const pathStarts: PathStarts = {
-    topLeft: { x: width * 0.20, y: height * 0.20 },
-    topRight: { x: width * 0.80, y: height * 0.20 },
-    bottomLeft: { x: width * 0.20, y: height * 0.80 },
-    bottomRight: { x: width * 0.80, y: height * 0.80 },
-  };
-
   const centerX = width / 2;
   const centerY = height / 2;
+  const radius = 200;
 
-  return [
-    // Top left - S-curve
-    `M${pathStarts.topLeft.x},${pathStarts.topLeft.y} 
-     C${width * 0.25},${height * 0.35} 
-     ${width * 0.35},${height * 0.25} 
-     ${centerX},${centerY}`,
-    
-    // Top right - wide arc
-    `M${pathStarts.topRight.x},${pathStarts.topRight.y} 
-     C${width * 0.75},${height * 0.35} 
-     ${width * 0.65},${height * 0.25} 
-     ${centerX},${centerY}`,
-    
-    // Bottom left - tight curve
-    `M${pathStarts.bottomLeft.x},${pathStarts.bottomLeft.y} 
-     C${width * 0.25},${height * 0.65} 
-     ${width * 0.35},${height * 0.75} 
-     ${centerX},${centerY}`,
-    
-    // Bottom right - wavy path
-    `M${pathStarts.bottomRight.x},${pathStarts.bottomRight.y} 
-     C${width * 0.75},${height * 0.65} 
-     ${width * 0.65},${height * 0.75} 
-     ${centerX},${centerY}`,
-    
-    // Geospatial data path
-    `M${width * 0.80},${height * 0.5} 
-     C${width * 0.70},${height * 0.5} 
-     ${width * 0.65},${height * 0.5} 
-     ${centerX},${centerY}`,
-    
-    // PDF data path
-    `M${width * 0.5},${height * 0.20} 
-     C${width * 0.5},${height * 0.30} 
-     ${width * 0.5},${height * 0.35} 
-     ${centerX},${centerY}`
-  ];
+  return DATA_SOURCES.map((_, index) => {
+    const angle = (index * (2 * Math.PI / DATA_SOURCES.length)) - (Math.PI / 2);
+    const x = centerX + Math.cos(angle) * radius;
+    const y = centerY + Math.sin(angle) * radius;
+
+    return `M${x},${y} 
+            C${x * 0.8 + centerX * 0.2},${y * 0.8 + centerY * 0.2} 
+            ${x * 0.2 + centerX * 0.8},${y * 0.2 + centerY * 0.8} 
+            ${centerX},${centerY}`;
+  });
 };
 
 export const calculateTubePath = (width: number, height: number) => {

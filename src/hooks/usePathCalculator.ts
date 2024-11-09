@@ -8,21 +8,14 @@ export const usePathCalculator = (containerRef: React.RefObject<HTMLDivElement>)
     const width = container.offsetWidth;
     const height = container.offsetHeight;
     
-    const pathStarts = {
-      topLeft: { x: width * 0.20, y: height * 0.20 },
-      topRight: { x: width * 0.80, y: height * 0.20 },
-      bottomLeft: { x: width * 0.20, y: height * 0.80 },
-      bottomRight: { x: width * 0.80, y: height * 0.80 }
-    };
-
     const centerX = width / 2;
     const centerY = height / 2;
 
     const paths = [
-      createPath('topLeft', pathStarts, width, height, centerX, centerY),
-      createPath('topRight', pathStarts, width, height, centerX, centerY),
-      createPath('bottomLeft', pathStarts, width, height, centerX, centerY),
-      createPath('bottomRight', pathStarts, width, height, centerX, centerY),
+      createPath('topLeft', width, height, centerX, centerY),
+      createPath('topRight', width, height, centerX, centerY),
+      createPath('bottomLeft', width, height, centerX, centerY),
+      createPath('bottomRight', width, height, centerX, centerY),
       createGeospatialPath(width, height, centerX, centerY),
       createPDFPath(width, height, centerX, centerY)
     ];
@@ -33,11 +26,25 @@ export const usePathCalculator = (containerRef: React.RefObject<HTMLDivElement>)
   return calculatePaths;
 };
 
-const createPath = (position: string, starts: any, width: number, height: number, centerX: number, centerY: number) => {
-  const start = starts[position];
-  return `M${start.x},${start.y} 
+const createPath = (position: string, width: number, height: number, centerX: number, centerY: number) => {
+  const angle = getAngleForPosition(position);
+  const radius = 200; // Match the radius used in DataMachine.tsx
+  const x = centerX + Math.cos(angle) * radius;
+  const y = centerY + Math.sin(angle) * radius;
+  
+  return `M${x},${y} 
           C${getControlPoint(position, width, height)} 
           ${centerX},${centerY}`;
+};
+
+const getAngleForPosition = (position: string) => {
+  const positions = {
+    topLeft: -Math.PI / 2 - Math.PI / 3,
+    topRight: -Math.PI / 2 - Math.PI / 6,
+    bottomLeft: -Math.PI / 2 + Math.PI / 6,
+    bottomRight: -Math.PI / 2 + Math.PI / 3,
+  };
+  return positions[position as keyof typeof positions];
 };
 
 const createGeospatialPath = (width: number, height: number, centerX: number, centerY: number) => {
@@ -62,13 +69,15 @@ const updatePathElements = (container: HTMLDivElement, paths: string[]) => {
 };
 
 const getControlPoint = (position: string, width: number, height: number) => {
-  const controls = {
-    topLeft: `${width * 0.2},${height * 0.4}`,
-    topRight: `${width * 0.8},${height * 0.4}`,
-    bottomLeft: `${width * 0.2},${height * 0.6}`,
-    bottomRight: `${width * 0.8},${height * 0.6}`
-  };
-  return controls[position as keyof typeof controls];
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const radius = 150; // Slightly shorter than the start radius
+  const angle = getAngleForPosition(position);
+  
+  const x = centerX + Math.cos(angle) * radius;
+  const y = centerY + Math.sin(angle) * radius;
+  
+  return `${x},${y}`;
 };
 
 // Helper functions... 

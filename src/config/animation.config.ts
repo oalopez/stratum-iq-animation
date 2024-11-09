@@ -6,15 +6,15 @@ export const ANIMATION_CONFIG = {
     // min: Smallest possible starting scale (1.2x normal size)
     // max: Largest possible starting scale (1.6x normal size)
     scale: {
-      min: 0.5, // x larger than normal
-      max: 1.0  // x larger than normal 
+      min: 0.2, // x larger than normal
+      max: 0.5  // x larger than normal 
     },
     // Controls the opacity of particles when they spawn
     // min: Minimum opacity value (60% visible)
     // max: Maximum opacity value (80% visible)
     opacity: {
-      min: 0.6, // 60% opacity
-      max: 0.8  // 80% opacity
+      min: 0.8, // Increase from 0.6
+      max: 1.0  // Increase from 0.8
     },
     // Controls how long particles take to travel their paths
     // min: Shortest possible duration (4 seconds)
@@ -25,11 +25,11 @@ export const ANIMATION_CONFIG = {
     },
     // Controls the final scale of particles before they disappear
     // Value of 1 means particles shrink back to their original size
-    endScale: 2,
+    endScale: 1,
     // How often particles are created (in seconds)
     frequency: {
-      min: 1, // Minimum time between particle creation
-      max: 2  // Maximum time between particle creation
+      min: 2, // Minimum time between particle creation
+      max: 4  // Maximum time between particle creation
     }
   },
   sources: {
@@ -62,12 +62,12 @@ export const PARTICLE_LIMITS = {
 };
 
 export const DATA_SOURCES = [
-  { type: 'json', color: 'blue-400', label: 'JSON Data', icon: 'FileJson' },
-  { type: 'spreadsheet', color: 'green-400', label: 'Spreadsheet', icon: 'FileSpreadsheet' },
-  { type: 'image', color: 'purple-400', label: 'Image Data', icon: 'FileImage' },
-  { type: 'html', color: 'yellow-400', label: 'HTML', icon: 'FileCode' },
-  { type: 'geospatial', color: 'cyan-400', label: 'Geospatial', icon: 'Globe2' },
-  { type: 'pdf', color: 'rose-400', label: 'PDF Files', icon: 'FileText' }
+  { type: 'json', color: 'text-blue-400', label: 'JSON Data', icon: 'FileJson' },
+  { type: 'spreadsheet', color: 'text-green-400', label: 'Spreadsheet', icon: 'FileSpreadsheet' },
+  { type: 'image', color: 'text-purple-400', label: 'Image Data', icon: 'FileImage' },
+  { type: 'html', color: 'text-yellow-400', label: 'HTML', icon: 'FileCode' },
+  { type: 'geospatial', color: 'text-cyan-400', label: 'Geospatial', icon: 'Globe2' },
+  { type: 'pdf', color: 'text-rose-400', label: 'PDF Files', icon: 'FileText' }
 ];
 
 export const OUTPUT_FORMATS = [

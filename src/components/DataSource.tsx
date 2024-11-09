@@ -3,14 +3,13 @@ import * as Icons from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 
 interface DataSourceProps {
-  type: string;
   color: string;
   label: string;
   icon: keyof typeof Icons;
   position: React.CSSProperties;
 }
 
-export const DataSource: React.FC<DataSourceProps> = ({ type, color, label, icon, position }) => {
+export const DataSource: React.FC<DataSourceProps> = ({ color, label, icon, position }) => {
   const Icon = Icons[icon] as LucideIcon;
   
   return (
