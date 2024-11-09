@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { FileJson, FileSpreadsheet, FileImage, FileCode, FileText, Table2, Globe2, Database } from 'lucide-react';
@@ -71,14 +71,6 @@ const DataMachine = () => {
     const width = container.offsetWidth;
     const height = container.offsetHeight;
     
-    // Keep icons at outer positions (12%)
-    const iconPositions = {
-      topLeft: { x: width * 0.12, y: height * 0.12 },
-      topRight: { x: width * 0.88, y: height * 0.12 },
-      bottomLeft: { x: width * 0.12, y: height * 0.88 },
-      bottomRight: { x: width * 0.88, y: height * 0.88 },
-    };
-
     // Path starting points (moved to 20% instead of 25%)
     const pathStarts = {
       topLeft: { x: width * 0.20, y: height * 0.20 },     // Changed from 0.25 to 0.20
@@ -358,10 +350,16 @@ const DataMachine = () => {
   }, []);
 
   const calculateTubePath = (width: number, height: number) => {
-    return `M${width/2},${height/2} 
-           C${width/2},${height * 0.65} 
-           ${width/2},${height * 0.75} 
-           ${width/2},${height - 100}`;
+    const startX = width / 2;
+    const startY = height / 2;
+    const endY = height - 120;
+    
+    return `
+      M ${startX},${startY}
+      C ${startX},${startY + 50}
+        ${startX - 20},${endY - 100}
+        ${startX},${endY}
+    `;
   };
 
   return (
@@ -378,16 +376,47 @@ const DataMachine = () => {
               </feMerge>
             </filter>
           </defs>
-          <path
-            id="tube-path"
-            d={calculateTubePath(window.innerWidth, window.innerHeight)}
-            stroke="#4F46E5"
-            strokeWidth="4"
-            fill="none"
-            filter="url(#glow)"
-            className="tube-line"
-            style={{ opacity: 0.8 }}
-          />
+          {/* Tunnel Effect */}
+          <g className="tunnel-effect">
+            <defs>
+              <linearGradient id="tunnelGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#4F46E5" stopOpacity="0.1"/>
+                <stop offset="50%" stopColor="#4F46E5" stopOpacity="0.3"/>
+                <stop offset="100%" stopColor="#4F46E5" stopOpacity="0.1"/>
+              </linearGradient>
+              
+              <filter id="tunnelGlow">
+                <feGaussianBlur stdDeviation="4" result="blur"/>
+                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+              </filter>
+            </defs>
+
+            {/* Multiple tunnel layers */}
+            {[0, 1, 2].map((index) => (
+              <path
+                key={`tunnel-${index}`}
+                d={calculateTubePath(window.innerWidth, window.innerHeight)}
+                className="tunnel-layer"
+                style={{
+                  fill: "none",
+                  stroke: "url(#tunnelGradient)",
+                  strokeWidth: 8 - (index * 2),
+                  opacity: 0.6 - (index * 0.15),
+                  filter: "url(#tunnelGlow)"
+                }}
+              />
+            ))}
+
+            {/* Animated flow lines */}
+            <path
+              d={calculateTubePath(window.innerWidth, window.innerHeight)}
+              className="tunnel-flow"
+              strokeDasharray="4 12"
+              strokeWidth="2"
+              stroke="#6366F1"
+              fill="none"
+            />
+          </g>
           {[0, 1, 2, 3, 4, 5].map((index) => (
             <path
               key={index}

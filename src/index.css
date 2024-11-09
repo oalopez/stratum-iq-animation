@@ -119,3 +119,22 @@
     stroke-dashoffset: 0;
   }
 }
+
+.tunnel-layer {
+  animation: pulseOpacity 2s ease-in-out infinite;
+}
+
+.tunnel-flow {
+  animation: flowAnimation 1s linear infinite;
+  filter: drop-shadow(0 0 8px #6366F1);
+}
+
+@keyframes pulseOpacity {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes flowAnimation {
+  0% { stroke-dashoffset: 16; }
+  100% { stroke-dashoffset: 0; }
+}
