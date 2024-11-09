@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import gsap from 'gsap';
 import { ANIMATION_CONFIG } from '../config/animation.config';
 
@@ -8,7 +8,7 @@ export const useAnimations = (
 ) => {
   const timeline = useRef<gsap.core.Timeline>();
 
-  const createParticle = useCallback((source: Element, index: number) => {
+  const createParticle = useCallback((_source: Element, _index: number) => {
     // Particle creation logic...
   }, []);
 

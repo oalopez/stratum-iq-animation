@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { FileJson, FileSpreadsheet, FileImage, FileCode, Globe2, FileText } from 'lucide-react';
-import { OUTPUT_FORMATS } from '../config/animation.config';
+import { OUTPUT_FORMATS, ANIMATION_CONFIG } from '../config/animation.config';
+import { calculateDataPaths, calculateTubePath } from '../utils/pathCalculations';
+import { useParticleSystem } from '../hooks/useParticleSystem';
 
 // Register the plugin
 gsap.registerPlugin(MotionPathPlugin);
@@ -13,57 +15,7 @@ const DataMachine = () => {
   const timeline = useRef<gsap.core.Timeline>();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Animation configuration parameters
-  const CONFIG = {
-    particles: {
-      scale: {
-        min: 1.2,
-        max: 1.6
-      },
-      opacity: {
-        min: 0.6,
-        max: 0.8
-      },
-      duration: {
-        min: 4,
-        max: 5
-      },
-      endScale: 0.6,
-      // Time between particles from same source
-      frequency: {
-        min: 2,
-        max: 3
-      }
-    },
-    sources: {
-      // Initial delay between different sources starting
-      startDelay: {
-        min: 2,
-        max: 3
-      }
-    },
-    paths: {
-      // Padding from corners as percentage of container size
-      padding: 0.1,
-      strokeWidth: 0,
-      opacity: 0.4
-    }
-  };
-
-  const PARTICLE_LIMITS = {
-    sources: {
-      maxPerSource: 3,
-      total: 18  // 6 sources × 3 particles each
-    },
-    output: {
-      max: 5
-    }
-  };
-
-  const particleTracking = {
-    sources: new Map<number, HTMLElement[]>(),
-    output: new Set<HTMLElement>()
-  };
+  const { createParticle, createOutputParticle, clearParticles } = useParticleSystem();
 
   // Function to calculate path coordinates based on container size
   const calculatePaths = () => {
@@ -73,56 +25,8 @@ const DataMachine = () => {
     const width = container.offsetWidth;
     const height = container.offsetHeight;
     
-    // Path starting points (moved to 20% instead of 25%)
-    const pathStarts = {
-      topLeft: { x: width * 0.20, y: height * 0.20 },     // Changed from 0.25 to 0.20
-      topRight: { x: width * 0.80, y: height * 0.20 },    // Changed from 0.75 to 0.80
-      bottomLeft: { x: width * 0.20, y: height * 0.80 },  // Changed from 0.25 to 0.20
-      bottomRight: { x: width * 0.80, y: height * 0.80 }, // Changed from 0.75 to 0.80
-    };
-
-    const centerX = width / 2;
-    const centerY = height / 2;
-
-    // Adjust control points accordingly
-    const paths = [
-      // Top left - S-curve
-      `M${pathStarts.topLeft.x},${pathStarts.topLeft.y} 
-       C${width * 0.25},${height * 0.35} 
-       ${width * 0.35},${height * 0.25} 
-       ${centerX},${centerY}`,
-      
-      // Top right - wide arc
-      `M${pathStarts.topRight.x},${pathStarts.topRight.y} 
-       C${width * 0.75},${height * 0.35} 
-       ${width * 0.65},${height * 0.25} 
-       ${centerX},${centerY}`,
-      
-      // Bottom left - tight curve
-      `M${pathStarts.bottomLeft.x},${pathStarts.bottomLeft.y} 
-       C${width * 0.25},${height * 0.65} 
-       ${width * 0.35},${height * 0.75} 
-       ${centerX},${centerY}`,
-      
-      // Bottom right - wavy path
-      `M${pathStarts.bottomRight.x},${pathStarts.bottomRight.y} 
-       C${width * 0.75},${height * 0.65} 
-       ${width * 0.65},${height * 0.75} 
-       ${centerX},${centerY}`,
-      
-      // Geospatial data path
-      `M${width * 0.80},${height * 0.5} 
-       C${width * 0.70},${height * 0.5} 
-       ${width * 0.65},${height * 0.5} 
-       ${centerX},${centerY}`,
-      
-      // PDF data path
-      `M${width * 0.5},${height * 0.20} 
-       C${width * 0.5},${height * 0.30} 
-       ${width * 0.5},${height * 0.35} 
-       ${centerX},${centerY}`
-    ];
-
+    const paths = calculateDataPaths(width, height);
+    
     paths.forEach((path, index) => {
       const pathElement = container.querySelector(`#path-${index}`) as SVGPathElement;
       if (pathElement) {
@@ -136,12 +40,8 @@ const DataMachine = () => {
     const handleResize = () => {
       // Get current container dimensions
       if (!containerRef.current) return;
-      const width = containerRef.current.offsetWidth;
-      const height = containerRef.current.offsetHeight;
-
       // Clear all particle tracking
-      particleTracking.sources.clear();
-      particleTracking.output.clear();
+      clearParticles(containerRef.current);
 
       // Remove all existing particles from DOM
       containerRef.current.querySelectorAll('.particle').forEach(p => p.remove());
@@ -154,12 +54,6 @@ const DataMachine = () => {
 
       // Update particle paths
       calculatePaths();
-      
-      // Update tube path
-      const tubePath = document.querySelector('#tube-path') as SVGPathElement;
-      if (tubePath) {
-        tubePath.setAttribute('d', calculateTubePath(width, height));
-      }
       
       // Restart animations
       initializeAnimations();
@@ -176,61 +70,6 @@ const DataMachine = () => {
     };
   }, []);
 
-  // Separate function for animations with fewer particles
-  const createParticle = (source: Element, index: number) => {
-    const particle = source.querySelector('.particle');
-    if (!particle) return;
-
-    // Check if we've reached the limit for this source
-    const existingParticles = particleTracking.sources.get(index) || [];
-    if (existingParticles.length >= PARTICLE_LIMITS.sources.maxPerSource) {
-      return;
-    }
-
-    const clonedParticle = particle.cloneNode(true) as HTMLElement;
-    source.appendChild(clonedParticle);
-    
-    // Track the new particle
-    particleTracking.sources.set(index, [...existingParticles, clonedParticle]);
-    
-    const randomDuration = gsap.utils.random(CONFIG.particles.duration.min, CONFIG.particles.duration.max);
-    const randomScale = gsap.utils.random(CONFIG.particles.scale.min, CONFIG.particles.scale.max);
-    const randomOpacity = gsap.utils.random(CONFIG.particles.opacity.min, CONFIG.particles.opacity.max);
-    
-    gsap.fromTo(clonedParticle,
-      { scale: randomScale, opacity: randomOpacity },
-      {
-        scale: 0.6,
-        opacity: 0,
-        motionPath: {
-          path: `#path-${index}`,
-          align: `#path-${index}`,
-          autoRotate: true,
-          alignOrigin: [0.5, 0.5]
-        },
-        duration: randomDuration,
-        ease: "none",
-        onComplete: () => {
-          // Remove from tracking and DOM
-          const particles = particleTracking.sources.get(index) || [];
-          particleTracking.sources.set(
-            index,
-            particles.filter(p => p !== clonedParticle)
-          );
-          clonedParticle.remove();
-        }
-      }
-    );
-
-    // Schedule next particle only if below limit
-    if (existingParticles.length < PARTICLE_LIMITS.sources.maxPerSource) {
-      gsap.delayedCall(
-        gsap.utils.random(CONFIG.particles.frequency.min, CONFIG.particles.frequency.max), 
-        () => createParticle(source, index)
-      );
-    }
-  };
-
   const initializeAnimations = () => {
     if (!containerRef.current || !machineRef.current) return;
 
@@ -238,7 +77,7 @@ const DataMachine = () => {
     const sources = containerRef.current.querySelectorAll('.data-source');
     sources.forEach((source, index) => {
       gsap.delayedCall(
-        index * gsap.utils.random(CONFIG.sources.startDelay.min, CONFIG.sources.startDelay.max),
+        index * gsap.utils.random(ANIMATION_CONFIG.sources.startDelay.min, ANIMATION_CONFIG.sources.startDelay.max),
         () => createParticle(source, index)
       );
     });
@@ -275,71 +114,21 @@ const DataMachine = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const createOutputParticle = (sourceType: 'api' | 'geospatial' | 'pdf') => {
-    // Check if we've reached the output particle limit
-    if (particleTracking.output.size >= PARTICLE_LIMITS.output.max) {
-      return;
-    }
-
-    const particle = document.createElement('div');
-    particle.className = `output-particle ${sourceType}`;
-    
-    const pathElement = document.querySelector('#tube-path') as SVGPathElement;
-    if (!pathElement) return;
-    
-    const startPoint = pathElement.getPointAtLength(0);
-    particle.style.transform = `translate(${startPoint.x}px, ${startPoint.y}px)`;
-    
-    const container = containerRef.current;
-    if (!container) return;
-
-    container.appendChild(particle);
-    particleTracking.output.add(particle);
-    
-    gsap.to(particle, {
-      motionPath: {
-        path: '#tube-path',
-        align: '#tube-path',
-        autoRotate: true,
-        alignOrigin: [0.5, 0.5]
-      },
-      duration: 1.5 + Math.random() * 0.4,
-      ease: "power2.out",
-      onComplete: () => {
-        particleTracking.output.delete(particle);
-        particle.remove();
-      }
-    });
-  };
-
-  // Create particles at intervals
   useEffect(() => {
+    if (!containerRef.current) return;
+    
     const createParticles = () => {
       const sources: Array<'api' | 'geospatial' | 'pdf'> = ['api', 'geospatial', 'pdf'];
       const randomSource = sources[Math.floor(Math.random() * sources.length)];
-      createOutputParticle(randomSource);
+      createOutputParticle(randomSource, containerRef.current!);
     };
 
-    // Increased interval from 100ms to 250ms
     const particleInterval = setInterval(createParticles, 250);
 
     return () => {
       clearInterval(particleInterval);
     };
-  }, []);
-
-  const calculateTubePath = (width: number, height: number) => {
-    const startX = width / 2;
-    const startY = height / 2;
-    const endY = height - 180;
-    
-    return `
-      M ${startX},${startY}
-      C ${startX},${startY + 50}
-        ${startX - 20},${endY - 50}
-        ${startX},${endY}
-    `;
-  };
+  }, [createOutputParticle]);
 
   return (
     <div ref={containerRef} className="relative w-full h-screen bg-gray-900 overflow-hidden">
@@ -401,11 +190,11 @@ const DataMachine = () => {
               key={index}
               id={`path-${index}`}
               stroke="#4F46E5"
-              strokeWidth={CONFIG.paths.strokeWidth}
+              strokeWidth={ANIMATION_CONFIG.paths.strokeWidth}
               fill="none"
               filter="url(#glow)"
               className="path-line"
-              style={{ opacity: CONFIG.paths.opacity }}
+              style={{ opacity: ANIMATION_CONFIG.paths.opacity }}
             />
           ))}
         </svg>
