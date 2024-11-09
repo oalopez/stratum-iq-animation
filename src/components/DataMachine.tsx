@@ -331,12 +331,12 @@ const DataMachine = () => {
   const calculateTubePath = (width: number, height: number) => {
     const startX = width / 2;
     const startY = height / 2;
-    const endY = height - 120;
+    const endY = height - 180;
     
     return `
       M ${startX},${startY}
       C ${startX},${startY + 50}
-        ${startX - 20},${endY - 100}
+        ${startX - 20},${endY - 50}
         ${startX},${endY}
     `;
   };
@@ -486,34 +486,42 @@ const DataMachine = () => {
         <div className="particle absolute w-4 h-4 bg-rose-400 rounded-full scale-0 opacity-0 z-5"></div>
       </div>
 
-      {/* Multi-format Output */}
+      {/* Multi-format Output Container */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4">
-        <div className="relative flex gap-8">
-          {OUTPUT_FORMATS.map((format, index) => {
-            const Icon = format.icon;
-            return (
-              <div key={format.type} className="relative">
-                <div className="output-icon-container">
-                  {/* Glow container */}
-                  <div className="glow-container"></div>
-                  {/* Icon */}
-                  <Icon 
-                    className={`output-icon w-12 h-12 ${index === currentIndex ? 'active' : ''}`}
-                    style={{
-                      transition: 'all 0.5s ease',
-                      transformOrigin: 'center'
-                    }}
-                  />
+        {/* Company Container - Hexagonal shape */}
+        <div className="relative">
+          {/* Background container with gradient - further reduced size */}
+          <div className="w-36 h-36 relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#1D9C9C]/20 to-[#105069]/20 
+                            backdrop-blur-sm rounded-xl border border-[#1D9C9C]/30
+                            shadow-[0_0_15px_rgba(29,156,156,0.3)]">
+              {/* Inner content - minimal padding */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="grid grid-cols-2 gap-2 p-2">
+                  {OUTPUT_FORMATS.map((format, index) => {
+                    const Icon = format.icon;
+                    return (
+                      <div key={format.type} 
+                           className={`relative transition-all duration-500 ease-out
+                                      ${index === currentIndex ? 'scale-110' : 'scale-90'}`}>
+                        <div className="output-icon-container">
+                          {/* Icon - increased size while maintaining container size */}
+                          <Icon 
+                            className={`output-icon w-12 h-12 ${index === currentIndex ? 'active' : ''}`}
+                            style={{
+                              transition: 'all 0.5s ease',
+                              transformOrigin: 'center',
+                              color: index === currentIndex ? '#1D9C9C' : '#105069'
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-                <span 
-                  className={`output-text absolute top-full left-1/2 transform -translate-x-1/2 mt-2 
-                             text-[#1D9C9C] text-sm font-medium ${index === currentIndex ? 'active' : ''}`}
-                >
-                  {format.label}
-                </span>
               </div>
-            );
-          })}
+            </div>
+          </div>
         </div>
       </div>
     </div>
