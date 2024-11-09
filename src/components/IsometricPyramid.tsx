@@ -2,44 +2,57 @@ import React from 'react';
 
 interface PyramidFace {
   points: string;
-  color: string;
-  className?: string;
   gradientId: string;
+  className: string;
 }
 
 const IsometricPyramid: React.FC = () => {
-  const size = 100;
-  const height = 120;
+  // Base size of the pyramid (square base)
+  const baseSize = 400;
   
+  // Calculate edge length (1.2x the base edge)
+  const edgeLength = baseSize * 1.2;
+  
+  // Calculate peak height using Pythagorean theorem
+  const peakHeight = Math.floor(Math.sqrt(Math.pow(edgeLength, 2) - Math.pow(baseSize/2, 2)));
+  
+  // Center point calculations
+  const centerX = baseSize / 2;
+  
+  // Calculate SVG viewBox dimensions with proper centering
+  const viewBoxWidth = baseSize * 1.5;
+  const viewBoxHeight = (baseSize + peakHeight) * 1.2;
+  const viewBoxX = -baseSize * 0.25;  // Adjust these values to center
+  const viewBoxY = -baseSize * 0.1;   // Adjust these values to center
+
   const faces: PyramidFace[] = [
+    // Front face
     {
-      points: `${size/2},0 0,${size} ${size},${size}`,
-      color: '#1D9C9C',
-      className: 'pyramid-face front',
-      gradientId: 'frontGradient'
+      points: `${centerX},0 0,${baseSize} ${baseSize},${baseSize}`,
+      gradientId: 'frontGradient',
+      className: 'pyramid-face front'
     },
+    // Left face
     {
-      points: `0,${size} ${size/2},0 ${size/2},${height}`,
-      color: '#16817A',
-      className: 'pyramid-face left',
-      gradientId: 'leftGradient'
+      points: `0,${baseSize} ${centerX},0 ${centerX},${peakHeight}`,
+      gradientId: 'leftGradient',
+      className: 'pyramid-face left'
     },
+    // Right face
     {
-      points: `${size},${size} ${size/2},0 ${size/2},${height}`,
-      color: '#105069',
-      className: 'pyramid-face right',
-      gradientId: 'rightGradient'
+      points: `${baseSize},${baseSize} ${centerX},0 ${centerX},${peakHeight}`,
+      gradientId: 'rightGradient',
+      className: 'pyramid-face right'
     }
   ];
 
   return (
     <div className="isometric-pyramid">
       <svg 
-        viewBox={`0 0 ${size} ${size + height}`} 
+        viewBox={`${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`}
         className="w-full h-full"
       >
         <defs>
-          {/* Gradient definitions */}
           <linearGradient id="frontGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#1D9C9C" stopOpacity="1" />
             <stop offset="100%" stopColor="#1D9C9C" stopOpacity="0.8" />
@@ -66,7 +79,7 @@ const IsometricPyramid: React.FC = () => {
             key={index}
             points={face.points}
             fill={`url(#${face.gradientId})`}
-            className={`${face.className} transition-all duration-300`}
+            className={face.className}
           />
         ))}
       </svg>

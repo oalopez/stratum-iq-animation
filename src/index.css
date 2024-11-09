@@ -272,8 +272,8 @@
   transform-style: preserve-3d;
   animation: pyramidFloat 3s ease-in-out infinite;
   position: relative;
-  width: 160px;  /* Adjust size as needed */
-  height: 160px;
+  width: 320px;  /* Doubled from 160px */
+  height: 320px;  /* Doubled from 160px */
   margin: 0 auto;
 }
 
