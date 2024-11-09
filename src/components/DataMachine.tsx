@@ -125,7 +125,19 @@ const DataMachine = () => {
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
+      // Get current container dimensions
+      if (!containerRef.current) return;
+      const width = containerRef.current.offsetWidth;
+      const height = containerRef.current.offsetHeight;
+      
+      // Update particle paths
       calculatePaths();
+      
+      // Update tube path
+      const tubePath = document.querySelector('#tube-path') as SVGPathElement;
+      if (tubePath) {
+        tubePath.setAttribute('d', calculateTubePath(width, height));
+      }
       
       // Kill existing animations
       if (timeline.current) {
@@ -299,6 +311,13 @@ const DataMachine = () => {
     };
   }, []);
 
+  const calculateTubePath = (width: number, height: number) => {
+    return `M${width/2},${height/2} 
+           C${width/2},${height * 0.65} 
+           ${width/2},${height * 0.75} 
+           ${width/2},${height - 100}`;
+  };
+
   return (
     <div ref={containerRef} className="relative w-full h-screen bg-gray-900 overflow-hidden">
       {/* Add a wrapper div for SVG and particles with lower z-index */}
@@ -315,10 +334,7 @@ const DataMachine = () => {
           </defs>
           <path
             id="tube-path"
-            d={`M${window.innerWidth/2},${window.innerHeight/2} 
-                C${window.innerWidth/2},${window.innerHeight * 0.65} 
-                ${window.innerWidth/2},${window.innerHeight * 0.75} 
-                ${window.innerWidth/2},${window.innerHeight - 100}`}
+            d={calculateTubePath(window.innerWidth, window.innerHeight)}
             stroke="#4F46E5"
             strokeWidth="4"
             fill="none"
