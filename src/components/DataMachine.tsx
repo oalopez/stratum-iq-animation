@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useDataMachineAnimations } from '../hooks/useDataMachineAnimations';
 import { useOutputCycling } from '../hooks/useOutputCycling';
 import { useScalingFactor } from '../hooks/useScalingFactor';
