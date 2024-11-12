@@ -1,9 +1,8 @@
 import { DATA_SOURCES } from '../config/animation.config';
 
-export const calculateDataPaths = (width: number, height: number) => {
+export const calculateDataPaths = (width: number, height: number, radius: number) => {
   const centerX = width / 2;
   const centerY = height / 2;
-  const radius = 200;
 
   return DATA_SOURCES.map((_, index) => {
     const totalAngle = 2 * Math.PI - (120 * Math.PI / 180);

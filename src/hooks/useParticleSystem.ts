@@ -1,6 +1,7 @@
 import { useCallback, useRef } from 'react';
 import gsap from 'gsap';
-import { ANIMATION_CONFIG, PARTICLE_LIMITS } from '../config/animation.config';
+import { getAnimationConfig, PARTICLE_LIMITS } from '../config/animation.config';
+import { useScalingFactor } from './useScalingFactor';
 
 interface ParticleTracking {
   sources: Map<number, HTMLElement[]>;
@@ -8,6 +9,10 @@ interface ParticleTracking {
 }
 
 export const useParticleSystem = () => {
+
+  const scalingFactor = useScalingFactor();
+  const ANIMATION_CONFIG = getAnimationConfig(scalingFactor);
+
   const particleTrackingRef = useRef<ParticleTracking>({
     sources: new Map<number, HTMLElement[]>(),
     output: new Set<HTMLElement>()

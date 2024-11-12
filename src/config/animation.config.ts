@@ -1,41 +1,26 @@
 import { Table2, FileJson, FileCode, Database } from 'lucide-react';
 
-export const ANIMATION_CONFIG = {
+export const getAnimationConfig = (scalingFactor: number) => ({
   particles: {
-    // Controls the initial size of particles when they spawn
-    // min: Smallest possible starting scale (1.2x normal size)
-    // max: Largest possible starting scale (1.6x normal size)
     scale: {
-      min: 0.2, // x larger than normal
-      max: 0.5  // x larger than normal 
+      min: 0.2 * scalingFactor,
+      max: 0.5 * scalingFactor
     },
-    // Controls the opacity of particles when they spawn
-    // min: Minimum opacity value (60% visible)
-    // max: Maximum opacity value (80% visible)
     opacity: {
-      min: 0.8, // Increase from 0.6
-      max: 1.0  // Increase from 0.8
+      min: 0.8,
+      max: 1.0
     },
-    // Controls how long particles take to travel their paths
-    // min: Shortest possible duration (4 seconds)
-    // max: Longest possible duration (5 seconds) 
     duration: {
       min: 2,
       max: 5
     },
-    // Controls the final scale of particles before they disappear
-    // Value of 1 means particles shrink back to their original size
     endScale: 1,
-    // How often particles are created (in seconds)
     frequency: {
-      min: 2, // Minimum time between particle creation
-      max: 4  // Maximum time between particle creation
+      min: 2,
+      max: 4
     }
   },
   sources: {
-    // Controls the initial delay before particles start spawning from each source
-    // min: Minimum delay of 2 seconds before first particle
-    // max: Maximum delay of 3 seconds before first particle
     startDelay: {
       min: 1,
       max: 2
@@ -46,17 +31,14 @@ export const ANIMATION_CONFIG = {
     strokeWidth: 0,
     opacity: 0.4
   }
-};
+});
 
 export const PARTICLE_LIMITS = {
   sources: {
-    // Maximum number of particles that can be active at once for each individual source
     maxPerSource: 2,
-    // Maximum total particles across all sources (6 sources × 3 particles each = 18)
     total: 12
   },
   output: {
-    // Maximum number of output particles that can be active at once
     max: 8
   }
 };

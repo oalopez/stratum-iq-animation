@@ -1,8 +1,12 @@
 import React from 'react';
 import * as Icons from 'lucide-react';
 import { DATA_SOURCES } from '../config/animation.config';
+import { useScalingFactor } from '../hooks/useScalingFactor';
 
 const DataSources: React.FC = () => {
+  const scalingFactor = useScalingFactor();
+  const radius = 200 * scalingFactor;
+
   return (
     <>
       {DATA_SOURCES.map((source, index) => {
@@ -10,7 +14,6 @@ const DataSources: React.FC = () => {
         const angleOffset = -Math.PI / 2;
         const startAngle = angleOffset - (totalAngle / 2);
         const angle = startAngle + (index * (totalAngle / DATA_SOURCES.length));
-        const radius = 200;
         const x = Math.cos(angle) * radius;
         const y = Math.sin(angle) * radius;
 
@@ -21,7 +24,7 @@ const DataSources: React.FC = () => {
             style={{ 
               left: '50%',
               top: '50%',
-              transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`
+              transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scalingFactor})`
             }}
           >
             {React.createElement(Icons[source.icon as keyof typeof Icons] as React.ComponentType<any>, {

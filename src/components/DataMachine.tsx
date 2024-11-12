@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
-import { ANIMATION_CONFIG } from '../config/animation.config';
+import { getAnimationConfig } from '../config/animation.config';
 import { calculateDataPaths } from '../utils/pathCalculations';
 import { useParticleSystem } from '../hooks/useParticleSystem';
 import OutputContainer from './OutputContainer';
 import CentralMachine from './CentralMachine';
 import DataSources from './DataSources';
 import Tunnel from './Tunnel';
+import { useScalingFactor } from '../hooks/useScalingFactor';
 
 // Register the plugin
 gsap.registerPlugin(MotionPathPlugin);
@@ -20,6 +21,9 @@ const DataMachine = () => {
 
   const { createParticle, createOutputParticle, clearParticles } = useParticleSystem();
 
+  const scalingFactor = useScalingFactor();
+  const ANIMATION_CONFIG = getAnimationConfig(scalingFactor);
+
   // Function to calculate path coordinates based on container size
   const calculatePaths = () => {
     if (!containerRef.current) return;
@@ -28,7 +32,10 @@ const DataMachine = () => {
     const width = container.offsetWidth;
     const height = container.offsetHeight;
     
-    const paths = calculateDataPaths(width, height);
+    // Apply scaling to the radius
+    const radius = 200 * scalingFactor;
+    
+    const paths = calculateDataPaths(width, height, radius);
     
     paths.forEach((path: string, index: number) => {
       const pathElement = container.querySelector(`#path-${index}`) as SVGPathElement;
