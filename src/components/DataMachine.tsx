@@ -8,12 +8,15 @@ import DataSources from './DataSources';
 import Tunnel from './Tunnel';
 import ParticlePaths from './ParticlePaths';
 
-const DataMachine = () => {
+const DataMachine: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const machineRef = useRef<HTMLDivElement>(null);
   const currentIndex = useOutputCycling();
   const scalingFactor = useScalingFactor();
-  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
+  const [dimensions, setDimensions] = useState({ 
+    width: window.innerWidth,
+    height: window.innerHeight 
+  });
   const { createOutputParticle } = useDataMachineAnimations(containerRef);
 
   useEffect(() => {
@@ -29,9 +32,13 @@ const DataMachine = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full h-screen bg-background overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: 'none' }}>
+    <div 
+      ref={containerRef} 
+      className="fixed inset-0 w-screen h-screen flex items-center justify-center bg-background overflow-hidden"
+      style={{ minWidth: '100vw', minHeight: '100vh' }}
+    >
+      <div className="absolute inset-0">
+        <svg className="w-full h-full" preserveAspectRatio="xMidYMid meet" style={{ pointerEvents: 'none' }}>
           <defs>
             <filter id="glow">
               <feGaussianBlur stdDeviation="4" result="coloredBlur"/>

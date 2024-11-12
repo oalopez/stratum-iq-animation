@@ -5,7 +5,7 @@ import { useScalingFactor } from '../hooks/useScalingFactor';
 
 const DataSources: React.FC = () => {
   const scalingFactor = useScalingFactor();
-  const radius = 200 * scalingFactor;
+  const radius = 260 * scalingFactor;
 
   return (
     <>
@@ -15,7 +15,7 @@ const DataSources: React.FC = () => {
         const startAngle = angleOffset - (totalAngle / 2);
         const angle = startAngle + (index * (totalAngle / DATA_SOURCES.length));
         const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
+        const y = Math.sin(angle) * radius + (40 * scalingFactor);
 
         return (
           <div 

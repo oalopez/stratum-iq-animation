@@ -3,43 +3,43 @@ import { Table2, FileJson, FileCode, Database } from 'lucide-react';
 export const getAnimationConfig = (scalingFactor: number) => ({
   particles: {
     scale: {
-      min: 0.2 * scalingFactor,
-      max: 0.5 * scalingFactor
+      min: 0.3 * scalingFactor,
+      max: 0.8 * scalingFactor
     },
     opacity: {
       min: 0.8,
       max: 1.0
     },
     duration: {
-      min: 2,
-      max: 5
+      min: 3,
+      max: 6
     },
-    endScale: 1,
+    endScale: 1.2,
     frequency: {
-      min: 2,
-      max: 4
+      min: 1.5,
+      max: 3
     }
   },
   sources: {
     startDelay: {
-      min: 1,
-      max: 2
+      min: 0.5,
+      max: 1.5
     }
   },
   paths: {
-    padding: 0.1,
+    padding: 0.15,
     strokeWidth: 0,
-    opacity: 0.4
+    opacity: 0.5
   }
 });
 
 export const PARTICLE_LIMITS = {
   sources: {
-    maxPerSource: 2,
-    total: 12
+    maxPerSource: 4,
+    total: 24
   },
   output: {
-    max: 8
+    max: 16
   }
 };
 

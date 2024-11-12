@@ -5,18 +5,15 @@ export const useScalingFactor = () => {
 
   useEffect(() => {
     const calculateScaling = () => {
-      const baseWidth = 1920; // Base design width
-      const baseHeight = 1080; // Base design height
-      
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
       
-      // Calculate scaling based on both dimensions
-      const widthScale = windowWidth / baseWidth;
-      const heightScale = windowHeight / baseHeight;
+      // Calculate scaling based on the larger dimension to fill the screen
+      const widthScale = windowWidth / 1000; // Reduced base width for better scaling
+      const heightScale = windowHeight / 800; // Reduced base height for better scaling
       
-      // Use the smaller scaling factor to maintain proportions
-      const scale = Math.min(widthScale, heightScale);
+      // Use the larger scaling factor to ensure full screen coverage
+      const scale = Math.max(widthScale, heightScale);
       
       setScalingFactor(scale);
     };

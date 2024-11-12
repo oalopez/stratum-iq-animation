@@ -27,9 +27,9 @@ const OutputContainer: React.FC<OutputContainerProps> = ({ currentIndex, createO
     };
   }, [createOutputParticle]);
 
-  const baseIconSize = 48; // 12 * 4 (w-12 h-12 in original)
+  const baseIconSize = 48 * 0.64;
   const scaledIconSize = baseIconSize * scalingFactor;
-  const containerSize = 144 * scalingFactor; // 36 * 4 (w-36 h-36 in original)
+  const containerSize = 144 * 0.64 * scalingFactor;
 
   return (
     <div 
@@ -42,7 +42,7 @@ const OutputContainer: React.FC<OutputContainerProps> = ({ currentIndex, createO
                         backdrop-blur-sm rounded-xl border border-[#1D9C9C]/20
                         shadow-[0_0_10px_rgba(29,156,156,0.15)]">
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="grid grid-cols-2 gap-2 p-2">
+              <div className="grid grid-cols-2 gap-4 p-4">
                 {OUTPUT_FORMATS.map((format, index) => {
                   const Icon = format.icon;
                   return (
