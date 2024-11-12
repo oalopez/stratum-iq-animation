@@ -4,9 +4,12 @@ import { calculateTubePath } from '../utils/pathCalculations';
 interface TunnelProps {
   width: number;
   height: number;
+  scalingFactor: number;
 }
 
-const Tunnel: React.FC<TunnelProps> = ({ width, height }) => {
+const Tunnel: React.FC<TunnelProps> = ({ width, height, scalingFactor }) => {
+  const tubePath = calculateTubePath(width, height, scalingFactor);
+
   return (
     <g className="tunnel-effect">
       <defs>
@@ -26,7 +29,7 @@ const Tunnel: React.FC<TunnelProps> = ({ width, height }) => {
       {[0, 1, 2].map((index) => (
         <path
           key={`tunnel-${index}`}
-          d={calculateTubePath(width, height)}
+          d={tubePath}
           className="tunnel-layer"
           style={{
             fill: "none",
@@ -40,7 +43,7 @@ const Tunnel: React.FC<TunnelProps> = ({ width, height }) => {
 
       {/* Animated flow lines */}
       <path
-        d={calculateTubePath(width, height)}
+        d={tubePath}
         className="tunnel-flow"
         strokeDasharray="4 12"
         strokeWidth="15"

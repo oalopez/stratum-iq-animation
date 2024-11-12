@@ -19,15 +19,18 @@ export const calculateDataPaths = (width: number, height: number, radius: number
   });
 };
 
-export const calculateTubePath = (width: number, height: number) => {
+export const calculateTubePath = (width: number, height: number, scalingFactor: number) => {
   const startX = width / 2;
-  const startY = height / 2;
-  const endY = height - 180;
+  const pyramidHeight = 160 * scalingFactor; // Adjust this value based on your pyramid size
+  const startY = height / 2 + (pyramidHeight / 2); // Start from the bottom of the pyramid
+  const endY = height - (180 * scalingFactor); // End at the top of the output container
+  const controlPoint1Y = startY + (endY - startY) / 3;
+  const controlPoint2Y = endY - (endY - startY) / 3;
   
   return `
     M ${startX},${startY}
-    C ${startX},${startY + 50}
-      ${startX - 20},${endY - 50}
+    C ${startX},${controlPoint1Y}
+      ${startX - (40 * scalingFactor)},${controlPoint2Y}
       ${startX},${endY}
   `;
 }; 

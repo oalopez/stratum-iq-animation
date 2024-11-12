@@ -42,7 +42,7 @@ const DataMachine = () => {
             </filter>
           </defs>
           
-          <Tunnel width={dimensions.width} height={dimensions.height} />
+          <Tunnel width={dimensions.width} height={dimensions.height} scalingFactor={scalingFactor} />
           <ParticlePaths 
             width={dimensions.width} 
             height={dimensions.height} 
