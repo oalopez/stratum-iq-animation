@@ -1,11 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { OUTPUT_FORMATS } from '../config/animation.config';
 
 interface OutputContainerProps {
   currentIndex: number;
+  createOutputParticle: (sourceType: 'api' | 'geospatial' | 'pdf', container: HTMLElement) => void;
 }
 
-const OutputContainer: React.FC<OutputContainerProps> = ({ currentIndex }) => {
+const OutputContainer: React.FC<OutputContainerProps> = ({ currentIndex, createOutputParticle }) => {
+  useEffect(() => {
+    const container = document.querySelector('.output-particles-container') as HTMLElement;
+    if (!container) return;
+
+    const createParticles = () => {
+      const sources: Array<'api' | 'geospatial' | 'pdf'> = ['api', 'geospatial', 'pdf'];
+      const randomSource = sources[Math.floor(Math.random() * sources.length)];
+      createOutputParticle(randomSource, container);
+    };
+
+    const particleInterval = setInterval(createParticles, 250);
+
+    return () => {
+      clearInterval(particleInterval);
+    };
+  }, [createOutputParticle]);
+
   return (
     <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4">
       <div className="relative">

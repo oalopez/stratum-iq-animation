@@ -1,7 +1,11 @@
 import { useCallback, useRef } from 'react';
 import gsap from 'gsap';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { getAnimationConfig, PARTICLE_LIMITS } from '../config/animation.config';
 import { useScalingFactor } from './useScalingFactor';
+
+// Register the MotionPath plugin
+gsap.registerPlugin(MotionPathPlugin);
 
 interface ParticleTracking {
   sources: Map<number, HTMLElement[]>;
@@ -113,6 +117,7 @@ export const useParticleSystem = () => {
   return {
     createParticle,
     createOutputParticle,
-    clearParticles
+    clearParticles,
+    ANIMATION_CONFIG
   };
 }; 

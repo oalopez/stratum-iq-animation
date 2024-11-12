@@ -1,6 +1,7 @@
 import { useRef, useCallback } from 'react';
 import gsap from 'gsap';
-import { ANIMATION_CONFIG } from '../config/animation.config';
+import { getAnimationConfig } from '../config/animation.config';
+import { useScalingFactor } from './useScalingFactor';
 
 export const useAnimations = (
   containerRef: React.RefObject<HTMLDivElement>,
@@ -15,10 +16,12 @@ export const useAnimations = (
   const initializeAnimations = useCallback(() => {
     if (!containerRef.current || !machineRef.current) return;
 
+    const scalingFactor = useScalingFactor();
+    const config = getAnimationConfig(scalingFactor);
     const sources = containerRef.current.querySelectorAll('.data-source');
     sources.forEach((source, index) => {
       gsap.delayedCall(
-        index * gsap.utils.random(ANIMATION_CONFIG.sources.startDelay.min, ANIMATION_CONFIG.sources.startDelay.max),
+        index * gsap.utils.random(config.sources.startDelay.min, config.sources.startDelay.max),
         () => createParticle(source, index)
       );
     });

@@ -1,137 +1,35 @@
-import { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
-import { getAnimationConfig } from '../config/animation.config';
-import { calculateDataPaths } from '../utils/pathCalculations';
-import { useParticleSystem } from '../hooks/useParticleSystem';
+import React, { useRef, useEffect, useState } from 'react';
+import { useDataMachineAnimations } from '../hooks/useDataMachineAnimations';
+import { useOutputCycling } from '../hooks/useOutputCycling';
+import { useScalingFactor } from '../hooks/useScalingFactor';
 import OutputContainer from './OutputContainer';
 import CentralMachine from './CentralMachine';
 import DataSources from './DataSources';
 import Tunnel from './Tunnel';
-import { useScalingFactor } from '../hooks/useScalingFactor';
-
-// Register the plugin
-gsap.registerPlugin(MotionPathPlugin);
+import ParticlePaths from './ParticlePaths';
 
 const DataMachine = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const machineRef = useRef<HTMLDivElement>(null);
-  const timeline = useRef<gsap.core.Timeline>();
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const { createParticle, createOutputParticle, clearParticles } = useParticleSystem();
-
+  const currentIndex = useOutputCycling();
   const scalingFactor = useScalingFactor();
-  const ANIMATION_CONFIG = getAnimationConfig(scalingFactor);
+  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
+  const { createOutputParticle } = useDataMachineAnimations(containerRef);
 
-  // Function to calculate path coordinates based on container size
-  const calculatePaths = () => {
-    if (!containerRef.current) return;
-    
-    const container = containerRef.current;
-    const width = container.offsetWidth;
-    const height = container.offsetHeight;
-    
-    // Apply scaling to the radius
-    const radius = 200 * scalingFactor;
-    
-    const paths = calculateDataPaths(width, height, radius);
-    
-    paths.forEach((path: string, index: number) => {
-      const pathElement = container.querySelector(`#path-${index}`) as SVGPathElement;
-      if (pathElement) {
-        pathElement.setAttribute('d', path);
-      }
-    });
-  };
-
-  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      // Get current container dimensions
-      if (!containerRef.current) return;
-      // Clear all particle tracking
-      clearParticles(containerRef.current);
-
-      // Remove all existing particles from DOM
-      containerRef.current.querySelectorAll('.particle').forEach(p => p.remove());
-      containerRef.current.querySelectorAll('.output-particle').forEach(p => p.remove());
-      
-      // Kill existing animations
-      if (timeline.current) {
-        timeline.current.kill();
-      }
-
-      // Update particle paths
-      calculatePaths();
-      
-      // Restart animations
-      initializeAnimations();
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
     };
 
-    // Add resize listener
     window.addEventListener('resize', handleResize);
-    
-    // Initial calculation
-    calculatePaths();
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  const initializeAnimations = () => {
-    if (!containerRef.current || !machineRef.current) return;
-
-    // Existing particle animations
-    const sources = containerRef.current.querySelectorAll('.data-source');
-    sources.forEach((source, index) => {
-      gsap.delayedCall(
-        index * gsap.utils.random(ANIMATION_CONFIG.sources.startDelay.min, ANIMATION_CONFIG.sources.startDelay.max),
-        () => createParticle(source, index)
-      );
-    });
-  };
-
-  // Initial animation setup
-  useEffect(() => {
-    initializeAnimations();
-    
-    return () => {
-      if (timeline.current) {
-        timeline.current.kill();
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    const outputs = ['CSV', 'JSON', 'API', 'Database'];
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % outputs.length);
-    }, 3000); // Changed to 3000ms for slower transitions
-
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    
-    const createParticles = () => {
-      const sources: Array<'api' | 'geospatial' | 'pdf'> = ['api', 'geospatial', 'pdf'];
-      const randomSource = sources[Math.floor(Math.random() * sources.length)];
-      createOutputParticle(randomSource, containerRef.current!);
-    };
-
-    const particleInterval = setInterval(createParticles, 250);
-
-    return () => {
-      clearInterval(particleInterval);
-    };
-  }, [createOutputParticle]);
 
   return (
     <div ref={containerRef} className="relative w-full h-screen bg-background overflow-hidden">
-      {/* SVG wrapper div */}
       <div className="absolute inset-0 z-0">
         <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: 'none' }}>
           <defs>
@@ -144,26 +42,18 @@ const DataMachine = () => {
             </filter>
           </defs>
           
-          <Tunnel width={window.innerWidth} height={window.innerHeight} />
-          
-          {[0, 1, 2, 3, 4, 5].map((index) => (
-            <path
-              key={index}
-              id={`path-${index}`}
-              stroke="#4F46E5"
-              strokeWidth={ANIMATION_CONFIG.paths.strokeWidth}
-              fill="none"
-              filter="url(#glow)"
-              className="path-line"
-              style={{ opacity: ANIMATION_CONFIG.paths.opacity }}
-            />
-          ))}
+          <Tunnel width={dimensions.width} height={dimensions.height} />
+          <ParticlePaths 
+            width={dimensions.width} 
+            height={dimensions.height} 
+            radius={200 * scalingFactor} 
+          />
         </svg>
       </div>
 
       <CentralMachine machineRef={machineRef} />
       <DataSources />
-      <OutputContainer currentIndex={currentIndex} />
+      <OutputContainer currentIndex={currentIndex} createOutputParticle={createOutputParticle} />
     </div>
   );
 };
