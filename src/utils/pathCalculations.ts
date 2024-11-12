@@ -24,7 +24,12 @@ export const calculateTubePath = (width: number, height: number, scalingFactor: 
   const startX = width / 2;
   const pyramidHeight = 160 * scalingFactor;
   const startY = height / 2 + (pyramidHeight / 2);
-  const endY = height - (72 * scalingFactor);
+  
+  // Calculate the end position to align with output container top
+  const outputContainerHeight = (144 * 0.64 * 2 * scalingFactor); // Match the container size from OutputContainer
+  const bottomPadding = 32 * scalingFactor; // 8 * 4 (bottom-8 from the container's className)
+  const endY = height - bottomPadding - outputContainerHeight;
+  
   const controlPoint1Y = startY + (endY - startY) / 3;
   const controlPoint2Y = endY - (endY - startY) / 3;
   

@@ -27,9 +27,9 @@ const OutputContainer: React.FC<OutputContainerProps> = ({ currentIndex, createO
     };
   }, [createOutputParticle]);
 
-  const baseIconSize = 48 * 0.64;
+  const baseIconSize = 48 * 0.64 * 2;
   const scaledIconSize = baseIconSize * scalingFactor;
-  const containerSize = 144 * 0.64 * scalingFactor;
+  const containerSize = 144 * 0.64 * 2 * scalingFactor;
 
   return (
     <div 
