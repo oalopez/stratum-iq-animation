@@ -16,14 +16,14 @@ export const getAnimationConfig = (scalingFactor: number) => ({
     },
     endScale: 1.2,
     frequency: {
-      min: 1.5,
+      min: 2.0,
       max: 3
     }
   },
   sources: {
     startDelay: {
-      min: 0.5,
-      max: 1.5
+      min: 1.0,
+      max: 2.0
     }
   },
   paths: {
@@ -35,11 +35,11 @@ export const getAnimationConfig = (scalingFactor: number) => ({
 
 export const PARTICLE_LIMITS = {
   sources: {
-    maxPerSource: 4,
-    total: 24
+    maxPerSource: 3,
+    total: 18
   },
   output: {
-    max: 16
+    max: 10
   }
 };
 
